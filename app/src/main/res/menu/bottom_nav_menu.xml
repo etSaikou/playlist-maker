@@ -3,14 +3,14 @@
     <item
         android:id="@+id/nav_search"
         android:title="@string/btn_search"
-        android:icon="@drawable/icon_search" />
+        android:icon="@drawable/ic_search_19" />
     <item
         android:id="@+id/nav_medialib"
         android:title="@string/btn_mlib"
-        android:icon="@drawable/icon_medialib" />
+        android:icon="@drawable/ic_medialib_20" />
     <item
         android:id="@+id/nav_settings"
         android:title="@string/btn_settings"
 
-        android:icon="@drawable/icon_settings" />
+        android:icon="@drawable/ic_settings_20" />
 </menu>
