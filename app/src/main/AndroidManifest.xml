@@ -27,6 +27,9 @@
         <activity android:name=".SettingsActivity">
 
         </activity>
+        <activity android:name=".MediaActivity">
+
+        </activity>
     </application>
 
 </manifest>

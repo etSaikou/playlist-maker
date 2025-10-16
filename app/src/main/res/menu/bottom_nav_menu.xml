@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/search"
+        android:id="@+id/nav_search"
         android:title="@string/btn_search"
         android:icon="@drawable/icon_search" />
     <item
-        android:id="@+id/medialib"
+        android:id="@+id/nav_medialib"
         android:title="@string/btn_mlib"
         android:icon="@drawable/icon_medialib" />
     <item
-        android:id="@+id/settings"
+        android:id="@+id/nav_settings"
         android:title="@string/btn_settings"
 
         android:icon="@drawable/icon_settings" />
