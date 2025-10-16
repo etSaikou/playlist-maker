@@ -20,7 +20,7 @@
 
     <com.google.android.material.button.MaterialButton
         style="@style/MaterialButton"
-        android:id="@+id/view_button_search"
+        android:id="@+id/vSearchButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/margin16"
@@ -34,7 +34,7 @@
 
     <com.google.android.material.button.MaterialButton
         style="@style/MaterialButton"
-        android:id="@+id/view_button_media"
+        android:id="@+id/vMediaButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/margin16"
@@ -46,7 +46,7 @@
 
     <com.google.android.material.button.MaterialButton
         style="@style/MaterialButton"
-        android:id="@+id/view_button_settings"
+        android:id="@+id/vSettingsButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/margin16"
