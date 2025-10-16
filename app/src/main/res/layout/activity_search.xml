@@ -8,13 +8,13 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:title="@string/btn_search"
-        android:titleTextAppearance="@style/TextAppearance"
-        android:titleTextColor="@color/black"
+        app:title="@string/btn_search"
+        app:titleTextAppearance="@style/TextAppearance"
+        app:titleTextColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintStart_toStartOf="parent"

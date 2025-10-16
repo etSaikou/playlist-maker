@@ -10,12 +10,12 @@
     tools:context=".MainActivity">
 
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
-        android:title="@string/app_name"
-        android:titleTextAppearance="@style/TextAppearance"
-        android:titleTextColor="@color/white"
+        app:title="@string/app_name"
+        app:titleTextAppearance="@style/TextAppearance"
+        app:titleTextColor="@color/white"
         />
 
     <com.google.android.material.button.MaterialButton
@@ -29,7 +29,6 @@
         android:layout_marginBottom="@dimen/margin16"
         android:layout_weight="1"
         android:text="@string/btn_search"
-
         app:icon="@drawable/icon_search" />
 
     <com.google.android.material.button.MaterialButton
