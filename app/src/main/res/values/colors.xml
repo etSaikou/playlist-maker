@@ -5,7 +5,7 @@
     <color name="wb_bg">#FFFFFFFF</color>
     <color name="white_button">#FFFFFFFF</color>
     <color name="main_bg">#3772E7</color>
-    <color name="hint_gray">#AEAFB4</color>
+    <color name="search_hint">#AEAFB4</color>
     <color name="settings_draw_tint">#AEAFB4</color>
     <color name="main_btn_text">#1A1B22</color>
     <color name="et_search_bubble">#E6E8EB</color>

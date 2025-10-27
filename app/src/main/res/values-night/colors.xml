@@ -5,4 +5,5 @@
     <color name="toolbar_text">@color/white</color>
     <color name="settings_draw_tint">@color/white</color>
     <color name="settings_text_button">@color/white</color>
+    <color name="search_hint">@color/black</color>
 </resources>
