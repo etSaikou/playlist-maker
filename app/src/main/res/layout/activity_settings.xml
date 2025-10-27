@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/settings"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        app:navigationIcon="@drawable/ic_arrow_back_16"
+        app:title="@string/btn_settings"
+        app:titleTextAppearance="@style/TextAppearance"
+        app:titleTextColor="@color/black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp"
+        android:layout_marginBottom="@dimen/margin_settings_21"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/margin16"
+        android:paddingEnd="@dimen/margin16">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/ys_display_regular"
+            android:text="@string/settings_dark_theme"
+            android:textColor="@color/black"
+            android:textSize="@dimen/setting_text_size_16"
+
+            />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin16"
+        android:layout_marginTop="@dimen/margin_settings_21"
+        android:layout_marginEnd="@dimen/margin16"
+        android:layout_marginBottom="@dimen/margin_settings_21"
+        android:fontFamily="@font/ys_display_regular"
+        android:gravity="center_vertical"
+        android:text="@string/settings_share"
+        android:textColor="@color/black"
+        android:textSize="@dimen/setting_text_size_16"
+        app:drawableEndCompat="?attr/actionModeShareDrawable"
+        app:drawableTint="@color/hint_gray" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin16"
+        android:layout_marginTop="@dimen/margin_settings_21"
+        android:layout_marginEnd="@dimen/margin16"
+        android:layout_marginBottom="@dimen/margin_settings_21"
+        android:fontFamily="@font/ys_display_regular"
+        android:gravity="center_vertical"
+        android:text="@string/settings_support"
+        android:textColor="@color/black"
+        android:textSize="@dimen/setting_text_size_16"
+        android:clickable="true"
+        app:drawableEndCompat="@drawable/ic_support_24"
+        app:drawableTint="@color/hint_gray" />
+
+    <TextView
+        android:id="@+id/vUserAgreementButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin16"
+        android:layout_marginTop="@dimen/margin_settings_21"
+        android:layout_marginEnd="@dimen/margin16"
+        android:layout_marginBottom="@dimen/margin_settings_21"
+        android:fontFamily="@font/ys_display_regular"
+        android:gravity="center_vertical"
+        android:text="@string/settings_agreement"
+        android:textColor="@color/black"
+        android:textSize="@dimen/setting_text_size_16"
+        app:drawableEndCompat="@drawable/ic_arrow_forward_24"
+        app:drawableTint="@color/hint_gray" />
+
+</LinearLayout>

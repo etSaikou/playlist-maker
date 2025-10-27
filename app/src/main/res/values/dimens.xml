@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin16">16dp</dimen>
+    <dimen name="margin_settings_21">21dp</dimen>
+    <dimen name="setting_text_size_16">16sp</dimen>
+    <dimen name="toolbar_height">56dp</dimen>
+</resources>

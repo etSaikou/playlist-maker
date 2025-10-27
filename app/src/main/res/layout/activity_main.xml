@@ -1,19 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/main_bg"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        app:title="@string/app_name"
+        app:titleTextAppearance="@style/TextAppearance"
+        app:titleTextColor="@color/white"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        style="@style/MaterialButton"
+        android:id="@+id/vSearchButton"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/margin16"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="@dimen/margin16"
+        android:layout_marginBottom="@dimen/margin16"
+        android:layout_weight="1"
+        android:text="@string/btn_search"
+        app:icon="@drawable/ic_search_19" />
+
+    <com.google.android.material.button.MaterialButton
+        style="@style/MaterialButton"
+        android:id="@+id/vMediaButton"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/margin16"
+        android:layout_marginEnd="@dimen/margin16"
+        android:layout_marginBottom="@dimen/margin16"
+        android:layout_weight="1"
+        android:text="@string/btn_mlib"
+        app:icon="@drawable/ic_medialib_20" />
+
+    <com.google.android.material.button.MaterialButton
+        style="@style/MaterialButton"
+        android:id="@+id/vSettingsButton"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/margin16"
+        android:layout_marginEnd="@dimen/margin16"
+        android:layout_marginBottom="28dp"
+        android:layout_weight="1"
+        android:text="@string/btn_settings"
+        android:textColor="@color/black"
+        app:icon="@drawable/ic_settings_20" />
+
+</LinearLayout>
