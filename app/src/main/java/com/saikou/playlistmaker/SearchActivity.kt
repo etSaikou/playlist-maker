@@ -4,16 +4,25 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class SearchActivity : AppCompatActivity() {
+    private val bottomBar by lazy { findViewById<BottomNavigationView>(R.id.vNavMenu) }
+    private val searchBar by lazy { findViewById<EditText>(R.id.vSearchLine) }
+    private val clearButton by lazy { findViewById<ImageButton>(R.id.vClearButton) }
+    private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
 
+    companion object {
+        private const val SEARCH_TAG = "search_text"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,9 +33,10 @@ class SearchActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val bottomBar = findViewById<BottomNavigationView>(R.id.vNavMenu)
-        val searchBar = findViewById<EditText>(R.id.vSearchLine)
-        val clearButton = findViewById<ImageButton>(R.id.vClearButton)
+
+        toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         val searchWatcher = object : TextWatcher {
 
@@ -49,13 +59,17 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-               clearButton.visibility =  if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
+                clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
             }
 
         }
 
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+
+
         clearButton.setOnClickListener {
             searchBar.setText("")
+            inputMethodManager.hideSoftInputFromWindow(searchBar.windowToken, 0)
         }
 
         searchBar.addTextChangedListener(searchWatcher)
@@ -65,5 +79,22 @@ class SearchActivity : AppCompatActivity() {
 
 
     }
+
+//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+//        super.onRestoreInstanceState(savedInstanceState)
+//        val value = savedInstanceState.getString(SEARCH_TAG)
+//        searchBar.setText(value )
+//
+//    }
+//
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        if (!searchBar.text.isNullOrEmpty()) {
+//            outState.putString(SEARCH_TAG, searchBar.text.toString())
+//        }
+//        super.onSaveInstanceState(outState)
+//
+//
+//    }
+
 
 }
