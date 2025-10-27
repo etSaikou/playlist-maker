@@ -5,13 +5,16 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class SettingsActivity: AppCompatActivity() {
-
-
+class SettingsActivity : AppCompatActivity() {
+    private val agreementButton by lazy { findViewById<TextView>(R.id.vUserAgreementButton) }
+    private val shareButton by lazy { findViewById<TextView>(R.id.vShareButton) }
+    private val supportButton by lazy { findViewById<TextView>(R.id.vSupportButton) }
+    private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -23,9 +26,11 @@ class SettingsActivity: AppCompatActivity() {
             insets
         }
 
-        val agreementButton = findViewById<TextView>(R.id.vUserAgreementButton)
-        val shareButton = findViewById<TextView>(R.id.vShareButton)
-        val supportButton = findViewById<TextView>(R.id.vSupportButton)
+
+        toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
 
         shareButton.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND)
@@ -40,7 +45,10 @@ class SettingsActivity: AppCompatActivity() {
             val supIntent = Intent(Intent.ACTION_SENDTO)
             supIntent.data = "mailto:".toUri()
             supIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.my_email)))
-            supIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_subject_placeholder))
+            supIntent.putExtra(
+                Intent.EXTRA_SUBJECT,
+                getString(R.string.support_subject_placeholder)
+            )
             supIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.support_msg_placeholder))
             startActivity(supIntent)
 
@@ -49,8 +57,6 @@ class SettingsActivity: AppCompatActivity() {
         agreementButton.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, getString(R.string.agreement_link).toUri()))
         }
-
-
 
 
     }

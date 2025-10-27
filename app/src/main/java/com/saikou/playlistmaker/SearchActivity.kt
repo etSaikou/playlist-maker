@@ -7,6 +7,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -19,6 +20,7 @@ class SearchActivity : AppCompatActivity() {
     private val searchBar by lazy { findViewById<EditText>(R.id.vSearchLine) }
     private val clearButton by lazy { findViewById<ImageButton>(R.id.vClearButton) }
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
+    private lateinit var savedLine: String
 
     companion object {
         private const val SEARCH_TAG = "search_text"
@@ -37,6 +39,7 @@ class SearchActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+        savedLine = savedInstanceState?.getString(SEARCH_TAG) ?: ""
 
         val searchWatcher = object : TextWatcher {
 
@@ -59,6 +62,8 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
+                if (!s.isNullOrEmpty()) savedLine = s.toString()
+
                 clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
             }
 
@@ -73,28 +78,22 @@ class SearchActivity : AppCompatActivity() {
         }
 
         searchBar.addTextChangedListener(searchWatcher)
-
+        searchBar.setText(savedLine)
 
         bottomBar.visibility = View.GONE
-
-
     }
 
-//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-//        super.onRestoreInstanceState(savedInstanceState)
-//        val value = savedInstanceState.getString(SEARCH_TAG)
-//        searchBar.setText(value )
-//
-//    }
-//
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        if (!searchBar.text.isNullOrEmpty()) {
-//            outState.putString(SEARCH_TAG, searchBar.text.toString())
-//        }
-//        super.onSaveInstanceState(outState)
-//
-//
-//    }
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        savedLine = savedInstanceState.getString(SEARCH_TAG) ?: ""
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (!searchBar.text.isNullOrEmpty()) {
+            outState.putString(SEARCH_TAG, searchBar.text.toString())
+        }
+    }
 
 
 }

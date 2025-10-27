@@ -9,7 +9,7 @@
     tools:context=".SettingsActivity">
 
     <androidx.appcompat.widget.Toolbar
-
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
         app:navigationIcon="@drawable/ic_arrow_back_16"
