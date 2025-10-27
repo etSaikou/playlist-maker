@@ -14,46 +14,37 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
         app:title="@string/app_name"
-        app:titleTextAppearance="@style/TextAppearance"
+        app:titleTextAppearance="@style/ToolbarText"
         app:titleTextColor="@color/white"
         />
 
     <com.google.android.material.button.MaterialButton
-        style="@style/MaterialButton"
+        style="@style/ButtonMain"
         android:id="@+id/vSearchButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/margin16"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="@dimen/margin16"
-        android:layout_marginBottom="@dimen/margin16"
         android:layout_weight="1"
+        android:layout_marginTop="24dp"
         android:text="@string/btn_search"
         app:icon="@drawable/ic_search_19" />
 
     <com.google.android.material.button.MaterialButton
-        style="@style/MaterialButton"
+        style="@style/ButtonMain"
         android:id="@+id/vMediaButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/margin16"
-        android:layout_marginEnd="@dimen/margin16"
-        android:layout_marginBottom="@dimen/margin16"
         android:layout_weight="1"
         android:text="@string/btn_mlib"
         app:icon="@drawable/ic_medialib_20" />
 
     <com.google.android.material.button.MaterialButton
-        style="@style/MaterialButton"
+        style="@style/ButtonMain"
         android:id="@+id/vSettingsButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/margin16"
-        android:layout_marginEnd="@dimen/margin16"
-        android:layout_marginBottom="28dp"
         android:layout_weight="1"
+        android:layout_marginBottom="28dp"
         android:text="@string/btn_settings"
-        android:textColor="@color/black"
         app:icon="@drawable/ic_settings_20" />
 
 </LinearLayout>

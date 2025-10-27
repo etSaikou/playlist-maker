@@ -24,4 +24,31 @@
         <item name="iconTint">@color/black</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
     </style>
+    <style name="ButtonMain" parent = "Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">@font/ys_display</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:textColor">@color/main_btn_text</item>
+        <item name="iconGravity">textStart</item>
+        <item name="textAllCaps">false</item>
+        <item name="iconTint">@color/main_btn_text</item>
+        <item name="android:layout_marginStart">@dimen/margin16</item>
+        <item name="android:layout_marginEnd">@dimen/margin16</item>
+        <item name="android:layout_marginBottom">@dimen/margin16</item>
+    </style>
+    
+    <style name="TextButtonSettings">
+        <item name="android:textColor">@color/settings_text_button</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:layout_marginStart">@dimen/margin16</item>
+        <item name="android:layout_marginTop">@dimen/margin_settings_21</item>
+        <item name="android:layout_marginEnd">@dimen/margin16</item>
+        <item name="android:layout_marginBottom">@dimen/margin_settings_21</item>
+        <item name="drawableTint">@color/settings_draw_tint</item>
+        <item name="android:textSize">@dimen/setting_text_size_16</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:clickable">true</item>
+        
+    </style>
 </resources>
