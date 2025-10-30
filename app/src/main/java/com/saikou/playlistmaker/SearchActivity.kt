@@ -1,8 +1,6 @@
 package com.saikou.playlistmaker
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -12,13 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.doAfterTextChanged
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class SearchActivity : AppCompatActivity() {
-    private val bottomBar by lazy { findViewById<BottomNavigationView>(R.id.vNavMenu) }
-    private val searchBar by lazy { findViewById<EditText>(R.id.vSearchLine) }
-    private val clearButton by lazy { findViewById<ImageButton>(R.id.vClearButton) }
-    private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
+    private val bottomBar by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<BottomNavigationView>(R.id.vNavMenu) }
+    private val searchBar by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<EditText>(R.id.vSearchLine) }
+    private val clearButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<ImageButton>(R.id.vClearButton) }
+    private val toolbar by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<Toolbar>(R.id.toolbar) }
     private lateinit var savedLine: String
 
     companion object {
@@ -40,43 +39,18 @@ class SearchActivity : AppCompatActivity() {
         }
         savedLine = savedInstanceState?.getString(SEARCH_TAG) ?: ""
 
-        val searchWatcher = object : TextWatcher {
-
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-
-            }
-
-            override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int
-            ) {
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                if (!s.isNullOrEmpty()) savedLine = s.toString()
-
-                clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-            }
-
-        }
-
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-
 
         clearButton.setOnClickListener {
             searchBar.setText("")
             inputMethodManager.hideSoftInputFromWindow(searchBar.windowToken, 0)
         }
+        searchBar.doAfterTextChanged {
+            if (!it.isNullOrEmpty()) savedLine = it.toString()
 
-        searchBar.addTextChangedListener(searchWatcher)
+            clearButton.visibility = if (it.isNullOrEmpty()) View.GONE else View.VISIBLE
+        }
+
         searchBar.setText(savedLine)
 
         bottomBar.visibility = View.GONE
@@ -89,9 +63,9 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if (!searchBar.text.isNullOrEmpty()) {
-            outState.putString(SEARCH_TAG, searchBar.text.toString())
-        }
+
+        outState.putString(SEARCH_TAG, searchBar.text.toString())
+
     }
 
 

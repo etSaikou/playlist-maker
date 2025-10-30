@@ -11,10 +11,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class SettingsActivity : AppCompatActivity() {
-    private val agreementButton by lazy { findViewById<TextView>(R.id.vUserAgreementButton) }
-    private val shareButton by lazy { findViewById<TextView>(R.id.vShareButton) }
-    private val supportButton by lazy { findViewById<TextView>(R.id.vSupportButton) }
-    private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
+    private val agreementButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.vUserAgreementButton) }
+    private val shareButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.vShareButton) }
+    private val supportButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.vSupportButton) }
+    private val toolbar by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<Toolbar>(R.id.toolbar) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
