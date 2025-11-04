@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="main_bg">#1A1B22</color>
+    <color name="wb_bg">#1A1B22</color>
+    <color name="toolbar_text">@color/white</color>
+    <color name="settings_draw_tint">@color/white</color>
+    <color name="settings_text_button">@color/white</color>
+    <color name="search_hint">@color/black</color>
+</resources>

@@ -1,48 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/search"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/wb_bg"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        app:title="@string/btn_search"
-        app:titleTextAppearance="@style/TextAppearance"
-        app:titleTextColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
-
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_arrow_back_16"
+        app:title="@string/btn_search"
+        app:titleTextAppearance="@style/ToolbarText"
+        app:titleTextColor="@color/toolbar_text" />
 
     <EditText
+        android:id="@+id/vSearchLine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin16"
         android:layout_marginTop="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="@dimen/margin16"
         android:background="@drawable/shape_et_bubble"
         android:drawableStart="@drawable/ic_search_19"
         android:drawablePadding="8dp"
-        android:drawableTint="@color/hint_gray"
+        android:drawableTint="@color/search_hint"
         android:hint="@string/btn_search"
+        android:inputType="text"
+        android:maxLines="1"
         android:padding="8dp"
-        android:textColorHint="@color/hint_gray"
-        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/search_hint"
+        android:textSize="@dimen/setting_text_size_16"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         tools:ignore="RtlSymmetry" />
 
+    <ImageButton
+        android:id="@+id/vClearButton"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/ic_clear_x_16"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/vSearchLine"
+        app:layout_constraintEnd_toEndOf="@+id/vSearchLine"
+        app:layout_constraintTop_toTopOf="@id/vSearchLine" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/vTrackList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/margin16"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="@dimen/margin16"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/vNavMenu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/vSearchLine" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/vNavMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        app:backgroundTint="@color/wb_bg"
         app:itemIconTint="@drawable/bottom_bar_item"
         app:itemTextColor="@drawable/bottom_bar_item"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -9,6 +9,10 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
 
 class MainActivity : AppCompatActivity() {
+    private val searchButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<MaterialButton>(R.id.vSearchButton) }
+    private val mediaButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<MaterialButton>(R.id.vMediaButton) }
+    private val settingsButton by lazy(mode = LazyThreadSafetyMode.NONE){ findViewById<MaterialButton>(R.id.vSettingsButton) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,9 +26,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        val searchButton = findViewById<MaterialButton>(R.id.vSearchButton)
-        val mediaButton = findViewById<MaterialButton>(R.id.vMediaButton)
-        val settingsButton = findViewById<MaterialButton>(R.id.vSettingsButton)
+
 
         searchButton.setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
