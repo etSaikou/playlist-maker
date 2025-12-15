@@ -1,7 +1,6 @@
 package com.saikou.playlistmaker.track_adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -10,15 +9,18 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.saikou.playlistmaker.R
 import com.saikou.playlistmaker.entity.Track
+import com.saikou.playlistmaker.global.dpToPx
 
-class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class TrackViewHolder : RecyclerView.ViewHolder {
 
-    constructor(parent: ViewGroup) : this(
+    constructor(parent: ViewGroup) : super(
         LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)
     )
 
     private val trackName: TextView = itemView.findViewById<TextView>(R.id.vTrackName)
-    private val artistNameTime: TextView = itemView.findViewById<TextView>(R.id.vArtistTime)
+    private val artistName: TextView = itemView.findViewById<TextView>(R.id.vArtistName)
+    private val trackTime: TextView = itemView.findViewById<TextView>(R.id.vTime)
+
     private val artAlbum: ImageView = itemView.findViewById<ImageView>(R.id.vArt)
 
 
@@ -27,15 +29,14 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .load(track.artworkUrl100)
             .placeholder(R.drawable.ic_placeholder_45)
             .centerCrop()
-            .transform(RoundedCorners(2))
+            .transform(RoundedCorners(dpToPx(2f, itemView.context)))
             .into(artAlbum)
 
         trackName.text = track.trackName
-        artistNameTime.text = String.format(
-            itemView.context.getString(R.string.track_divider),
-            track.artistName,
-            track.trackTime
-        )
+        artistName.text = track.artistName
+        trackTime.text = track.trackTime
+
+
     }
 
 }

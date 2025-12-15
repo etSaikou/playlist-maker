@@ -31,21 +31,47 @@
             android:maxLines="1"
             android:textColor="@color/settings_text_button"
             android:textSize="@dimen/setting_text_size_16" />
-
-        <TextView
-            android:id="@+id/vArtistTime"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/ys_display_regular"
-            android:maxLines="1"
-            android:text="@string/track_divider"
-            android:textColor="@color/settings_draw_tint"
-            android:textSize="11sp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/vArtistName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ys_display_regular"
+                android:maxLines="1"
+                android:text="Artist"
+                android:textColor="@color/settings_draw_tint"
+                android:textSize="11sp" />
+
+            <ImageView
+                android:id="@+id/vDivider"
+                android:layout_width="3dp"
+                android:layout_height="@dimen/track_divider_size_3dp"
+                android:layout_marginStart="@dimen/track_divider_margin_5dp"
+                android:layout_marginEnd="5dp"
+                app:tint="@color/settings_draw_tint"
+                android:src="@drawable/ic_track_dot_3"/>
+            <TextView
+                android:id="@+id/vTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/ys_display_regular"
+                android:maxLines="1"
+                android:text="0:00"
+                android:textColor="@color/settings_draw_tint"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+
     </LinearLayout>
 
     <ImageView
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="@dimen/icon_size_24"
+        android:layout_height="@dimen/icon_size_24"
         android:src="@drawable/ic_arrow_forward_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
