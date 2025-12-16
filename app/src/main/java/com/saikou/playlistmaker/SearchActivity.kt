@@ -1,6 +1,5 @@
 package com.saikou.playlistmaker
 
-import android.net.Network
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -30,9 +29,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 
+const val BASE_URL = "https://itunes.apple.com"
 class SearchActivity : AppCompatActivity() {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://itunes.apple.com")
+        .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     private val bottomBar by lazy(mode = LazyThreadSafetyMode.NONE) {
@@ -74,10 +74,11 @@ class SearchActivity : AppCompatActivity() {
             call: Call<ResponseWrapper>,
             response: Response<ResponseWrapper>
         ) {
-            if (response.code() == 200) {
+            if (response.isSuccessful) {
                 trackList.clear()
                 if (response.body()?.results?.isNotEmpty() == true) {
-                    trackList.addAll(response.body()?.results!!)
+                    val tracks = response.body()?.results
+                    trackList.addAll(tracks.orEmpty())
                     trackAdapter.notifyDataSetChanged()
                 }
                 if (trackList.isEmpty()) {
