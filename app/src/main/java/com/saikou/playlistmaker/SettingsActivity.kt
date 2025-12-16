@@ -10,12 +10,15 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.saikou.playlistmaker.global.Const
+import androidx.core.content.edit
 
 class SettingsActivity : AppCompatActivity() {
     private val agreementButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.vUserAgreementButton) }
     private val shareButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.vShareButton) }
     private val supportButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.vSupportButton) }
     private val toolbar by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<Toolbar>(R.id.toolbar) }
+    private val sharedPreferences by lazy(mode = LazyThreadSafetyMode.NONE) { getSharedPreferences(Const.SHARED_PREFS, MODE_PRIVATE) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -28,9 +31,11 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.vThemeSwitcher)
+        themeSwitcher.isChecked = sharedPreferences.getBoolean(Const.DARK_THEME_KEY, false)
 
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
+            sharedPreferences.edit { putBoolean(Const.DARK_THEME_KEY, checked) }
         }
 
         toolbar.setNavigationOnClickListener {

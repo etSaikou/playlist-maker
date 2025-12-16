@@ -18,4 +18,6 @@
     <string name="search_error_network">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
     <string name="search_error_not_found">Ничего не нашлось</string>
     <string name="search_refresh_button">Обновить</string>
+    <string name="search_history_title">Вы искали</string>
+    <string name="clear_history_btn">Очистить историю</string>
 </resources>

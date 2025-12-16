@@ -22,9 +22,7 @@ class TrackViewHolder : RecyclerView.ViewHolder {
     private val trackName: TextView = itemView.findViewById<TextView>(R.id.vTrackName)
     private val artistName: TextView = itemView.findViewById<TextView>(R.id.vArtistName)
     private val trackTime: TextView = itemView.findViewById<TextView>(R.id.vTime)
-
     private val artAlbum: ImageView = itemView.findViewById<ImageView>(R.id.vArt)
-
 
     fun bind(track: Track) {
         Glide.with(itemView)
@@ -38,6 +36,10 @@ class TrackViewHolder : RecyclerView.ViewHolder {
         artistName.text = track.artistName
         trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
 
+
+    }
+
+    fun addToHistory(track: Track){
 
     }
 

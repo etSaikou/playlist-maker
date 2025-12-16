@@ -1,6 +1,8 @@
 package com.saikou.playlistmaker
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -21,6 +23,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
 import com.saikou.playlistmaker.entity.ResponseWrapper
 import com.saikou.playlistmaker.entity.Track
+import com.saikou.playlistmaker.global.Const
+import com.saikou.playlistmaker.global.SearchHistory
 import com.saikou.playlistmaker.track_adapter.TrackAdapter
 import retrofit2.Call
 import retrofit2.Callback
@@ -30,11 +34,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 
 const val BASE_URL = "https://itunes.apple.com"
+
 class SearchActivity : AppCompatActivity() {
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
+
     private val bottomBar by lazy(mode = LazyThreadSafetyMode.NONE) {
         findViewById<BottomNavigationView>(
             R.id.vNavMenu
@@ -60,16 +67,32 @@ class SearchActivity : AppCompatActivity() {
     private val searchBar by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<EditText>(R.id.vSearchLine) }
     private val clearButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<ImageButton>(R.id.vClearButton) }
     private val toolbar by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<Toolbar>(R.id.toolbar) }
+    private val clearHistory by lazy(mode = LazyThreadSafetyMode.NONE) {
+        findViewById<MaterialButton>(
+            R.id.vClearHistory
+        )
+    }
+    private val historyTitle by lazy(mode = LazyThreadSafetyMode.NONE) {
+        findViewById<TextView>(
+            R.id.vHistoryTitle
+        )
+    }
     private val trackListView by lazy(mode = LazyThreadSafetyMode.NONE) {
         findViewById<RecyclerView>(
             R.id.vTrackList
         )
     }
+    private lateinit var sharedPreferences: SharedPreferences
 
+    private lateinit var history: SearchHistory
     private lateinit var savedLine: String
     private val trackList = mutableListOf<Track>()
+    private val historyList = mutableListOf<Track>()
+
     private val trackAdapter = TrackAdapter(trackList)
-    private val searchCallback = object : Callback<ResponseWrapper>{
+    private val historyAdapter = TrackAdapter(historyList)
+
+    private val searchCallback = object : Callback<ResponseWrapper> {
         override fun onResponse(
             call: Call<ResponseWrapper>,
             response: Response<ResponseWrapper>
@@ -103,6 +126,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
     }
+
     companion object {
         private const val SEARCH_TAG = "search_text"
     }
@@ -116,16 +140,37 @@ class SearchActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        sharedPreferences = getSharedPreferences(
+            Const.SHARED_PREFS,
+            MODE_PRIVATE
+        )
+        history = SearchHistory(sharedPreferences)
         searchPlaceholder.visibility = View.GONE
         val searchApi = retrofit.create<BackendApi>()
+        trackAdapter.onItemClickCallback(history::addToHistory)
 
 
-        trackListView.adapter = trackAdapter
+        Log.e("SOMEZ", history.getList().size.toString())
+
+
+        checkAdapter()
+
+        clearHistory.setOnClickListener {
+            history.clearHistory()
+            historyList.clear()
+            historyAdapter.notifyDataSetChanged()
+            it.visibility = View.GONE
+            historyTitle.visibility = View.GONE
+            checkAdapter()
+        }
+
 
         toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
         savedLine = savedInstanceState?.getString(SEARCH_TAG) ?: ""
+
 
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
@@ -134,10 +179,14 @@ class SearchActivity : AppCompatActivity() {
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
             inputMethodManager.hideSoftInputFromWindow(searchBar.windowToken, 0)
+            checkAdapter()
         }
+
+
         searchBar.doAfterTextChanged {
             if (!it.isNullOrEmpty()) {
                 savedLine = it.toString()
+                setTrackAdapter(false)
 
 //                searchApi.search(it.toString()).enqueue(searchCallback)
             }
@@ -171,12 +220,43 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
+    private fun checkAdapter() {
+        setTrackAdapter(history.getList().isNotEmpty() && trackList.isEmpty())
+//        if (history.getList().isNotEmpty() && trackList.isEmpty()) {
+//            trackListView.adapter = historyAdapter
+//            historyList.clear()
+//            historyList.addAll(history.getList().reversed())
+//            historyAdapter.notifyDataSetChanged()
+//            historyAdapter.onItemClickCallback {  }
+//            clearHistory.visibility = View.VISIBLE
+//            historyTitle.visibility = View.VISIBLE
+//        } else {
+//            trackListView.adapter = trackAdapter
+//            clearHistory.visibility = View.GONE
+//            historyTitle.visibility = View.GONE
+//        }
+    }
+
+    private fun setTrackAdapter(isHistory: Boolean) {
+        if (isHistory) {
+            trackListView.adapter = historyAdapter
+            historyList.clear()
+            historyList.addAll(history.getList().reversed())
+            historyAdapter.notifyDataSetChanged()
+            historyAdapter.onItemClickCallback { }
+            clearHistory.visibility = View.VISIBLE
+            historyTitle.visibility = View.VISIBLE
+        } else {
+            trackListView.adapter = trackAdapter
+            clearHistory.visibility = View.GONE
+            historyTitle.visibility = View.GONE
+        }
+    }
+
     private fun showMessage(text: String, additionalMessage: String, isNetwork: Boolean) {
         if (text.isNotEmpty()) {
             searchPlaceholder.visibility = View.VISIBLE
-
             trackList.clear()
-
             trackAdapter.notifyDataSetChanged()
             placeholderText.text = text
             if (isNetwork) {
@@ -194,10 +274,4 @@ class SearchActivity : AppCompatActivity() {
             searchPlaceholder.visibility = View.GONE
         }
     }
-
-    fun addToList(trackName: String, artistName: String, trackTime: Long, artworkUrl100: String) {
-        trackList.add(Track(trackName, artistName, trackTime, artworkUrl100))
-    }
-
-
 }
