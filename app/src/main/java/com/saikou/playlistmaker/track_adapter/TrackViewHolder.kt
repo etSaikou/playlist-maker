@@ -10,6 +10,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.saikou.playlistmaker.R
 import com.saikou.playlistmaker.entity.Track
 import com.saikou.playlistmaker.global.dpToPx
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class TrackViewHolder : RecyclerView.ViewHolder {
 
@@ -34,7 +36,7 @@ class TrackViewHolder : RecyclerView.ViewHolder {
 
         trackName.text = track.trackName
         artistName.text = track.artistName
-        trackTime.text = track.trackTime
+        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
 
 
     }

@@ -15,4 +15,7 @@
     <string name="my_email">Raizou@yandex.ru</string>
     <string name="support_subject_placeholder">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="support_msg_placeholder">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="search_error_network">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="search_error_not_found">Ничего не нашлось</string>
+    <string name="search_refresh_button">Обновить</string>
 </resources>
