@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
     private val agreementButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.vUserAgreementButton) }
@@ -26,6 +27,11 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.vThemeSwitcher)
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+        }
 
         toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
