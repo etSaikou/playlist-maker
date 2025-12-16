@@ -6,4 +6,5 @@
     <color name="settings_draw_tint">@color/white</color>
     <color name="settings_text_button">@color/white</color>
     <color name="search_hint">@color/black</color>
+    <color name="et_search_bubble">#FFFFFF</color>
 </resources>
