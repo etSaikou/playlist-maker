@@ -2,7 +2,6 @@ package com.saikou.playlistmaker.global
 
 import android.content.SharedPreferences
 import android.util.Log
-import android.widget.Toast
 import com.saikou.playlistmaker.entity.Track
 import androidx.core.content.edit
 
@@ -40,7 +39,7 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
     private fun setList() {
         trackList.clear()
         try {
-            trackList.addAll(sharedPreferences.getString(Const.LAST_SEARCH, "")?.unserializeToList(Track::class.java)
+            trackList.addAll(sharedPreferences.getString(Const.LAST_SEARCH, "")?.deserializeToList(Track::class.java)
                 ?: listOf())
         } catch (e: Throwable) {
             Log.e("SOMEZ", e.toString())

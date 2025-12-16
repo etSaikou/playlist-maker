@@ -18,7 +18,7 @@ fun Any?.serialize(): String? {
     return GsonBuilder().create().toJson(this)
 }
 
-inline fun<reified T> String.unserialize(clazz: Class<T>): T? {
+inline fun<reified T> String.deserialize(clazz: Class<T>): T? {
     return try {
         GsonBuilder().create().fromJson(this, clazz)
     } catch (e: Exception) {
@@ -26,7 +26,7 @@ inline fun<reified T> String.unserialize(clazz: Class<T>): T? {
         null
     }
 }
-inline fun<reified T> String.unserializeToList(clazz: Class<T>): List<T> {
+inline fun<reified T> String.deserializeToList(clazz: Class<T>): List<T> {
     val gson = GsonBuilder().create()
 
     return gson.fromJson<List<T>>(this, object: TypeToken<List<T>>(){}.type)

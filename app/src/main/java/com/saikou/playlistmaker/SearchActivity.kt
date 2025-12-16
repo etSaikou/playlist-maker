@@ -174,11 +174,13 @@ class SearchActivity : AppCompatActivity() {
 
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
+        searchBar.requestFocus()
         clearButton.setOnClickListener {
             searchBar.setText("")
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
             inputMethodManager.hideSoftInputFromWindow(searchBar.windowToken, 0)
+            showMessage("","",false)
             checkAdapter()
         }
 
@@ -192,6 +194,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             clearButton.visibility = if (it.isNullOrEmpty()) View.GONE else View.VISIBLE
+            setTrackAdapter(it.toString().isEmpty())
         }
 
         refreshButton.setOnClickListener {

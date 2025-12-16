@@ -36,6 +36,8 @@
         android:imeOptions="actionDone"
         android:inputType="text"
         android:maxLines="1"
+        android:focusable="true"
+        android:focusedByDefault="true"
         android:padding="8dp"
         android:textColor="@color/black"
         android:textColorHint="@color/search_hint"
