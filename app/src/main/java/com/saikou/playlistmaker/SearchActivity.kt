@@ -1,6 +1,7 @@
 package com.saikou.playlistmaker
 
 import android.content.SharedPreferences
+import android.media.AudioManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -174,7 +175,12 @@ class SearchActivity : AppCompatActivity() {
 
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
-        searchBar.requestFocus()
+        searchBar.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus && searchBar.text.isNullOrEmpty() && historyAdapter.itemCount > 0 ) {
+                setTrackAdapter(true)
+            }
+        }
+
         clearButton.setOnClickListener {
             searchBar.setText("")
             trackList.clear()
