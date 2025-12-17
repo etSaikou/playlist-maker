@@ -186,11 +186,14 @@ class SearchActivity : AppCompatActivity() {
 
 
         searchBar.doAfterTextChanged {
+
             if (!it.isNullOrEmpty()) {
                 savedLine = it.toString()
                 setTrackAdapter(false)
 
 //                searchApi.search(it.toString()).enqueue(searchCallback)
+            } else {
+                setTrackAdapter(true)
             }
 
             clearButton.visibility = if (it.isNullOrEmpty()) View.GONE else View.VISIBLE
@@ -253,6 +256,7 @@ class SearchActivity : AppCompatActivity() {
             trackListView.adapter = trackAdapter
             clearHistory.visibility = View.GONE
             historyTitle.visibility = View.GONE
+            showMessage("","", false)
         }
     }
 
