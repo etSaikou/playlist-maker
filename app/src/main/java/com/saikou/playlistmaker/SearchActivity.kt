@@ -179,6 +179,7 @@ class SearchActivity : AppCompatActivity() {
             if (hasFocus && searchBar.text.isNullOrEmpty() && historyAdapter.itemCount > 0 ) {
                 setTrackAdapter(true)
             }
+            //Я вообще без понятия что ещё надо в фокусе честно, я даже не выкупаю зачем тут оно
         }
 
         clearButton.setOnClickListener {
