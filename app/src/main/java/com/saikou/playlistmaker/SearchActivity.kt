@@ -1,5 +1,7 @@
 package com.saikou.playlistmaker
 
+import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -25,6 +27,7 @@ import com.saikou.playlistmaker.entity.ResponseWrapper
 import com.saikou.playlistmaker.entity.Track
 import com.saikou.playlistmaker.global.Const
 import com.saikou.playlistmaker.global.SearchHistory
+import com.saikou.playlistmaker.global.serialize
 import com.saikou.playlistmaker.track_adapter.TrackAdapter
 import retrofit2.Call
 import retrofit2.Callback
@@ -148,7 +151,11 @@ class SearchActivity : AppCompatActivity() {
         history = SearchHistory(sharedPreferences)
         searchPlaceholder.visibility = View.GONE
         val searchApi = retrofit.create<BackendApi>()
-        trackAdapter.onItemClickCallback(history::addToHistory)
+//        trackAdapter.onItemClickCallback(history::addToHistory)
+        trackAdapter.onItemClickCallback {
+            history.addToHistory(it)
+            openPlayer(this, it)
+        }
 
 
         Log.e("SOMEZ", history.getList().size.toString())
@@ -246,7 +253,9 @@ class SearchActivity : AppCompatActivity() {
             historyList.clear()
             historyList.addAll(history.getList().reversed())
             historyAdapter.notifyDataSetChanged()
-            historyAdapter.onItemClickCallback { }
+            historyAdapter.onItemClickCallback {
+                openPlayer(this, it)
+            }
             clearHistory.visibility = View.VISIBLE
             historyTitle.visibility = View.VISIBLE
         } else {
@@ -254,6 +263,12 @@ class SearchActivity : AppCompatActivity() {
             clearHistory.visibility = View.GONE
             historyTitle.visibility = View.GONE
         }
+    }
+
+    private fun openPlayer(context: Context,track: Track) {
+        val intent = Intent(context, PlayerActivity::class.java)
+        intent.putExtra(Const.PLAYER_TRACK_DATA, track.serialize())
+        startActivity(intent)
     }
 
     private fun showMessage(text: String, additionalMessage: String, isNetwork: Boolean) {
