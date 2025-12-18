@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_arrow_back_16"
@@ -32,9 +33,11 @@
         android:drawablePadding="8dp"
         android:drawableTint="@color/search_hint"
         android:hint="@string/btn_search"
+        android:imeOptions="actionDone"
         android:inputType="text"
         android:maxLines="1"
-        android:imeOptions="actionDone"
+        android:focusable="true"
+        android:focusedByDefault="true"
         android:padding="8dp"
         android:textColor="@color/black"
         android:textColorHint="@color/search_hint"
@@ -55,6 +58,21 @@
         app:layout_constraintEnd_toEndOf="@+id/vSearchLine"
         app:layout_constraintTop_toTopOf="@id/vSearchLine" />
 
+    <TextView
+        android:id="@+id/vHistoryTitle"
+        android:textColor="@color/settings_text_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/ys_display"
+        android:text="@string/search_history_title"
+        android:textSize="19sp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/vSearchLine"
+        app:layout_constraintStart_toStartOf="@+id/vSearchLine"
+        app:layout_constraintTop_toBottomOf="@+id/vSearchLine" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/vTrackList"
         android:layout_width="0dp"
@@ -63,10 +81,23 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="@dimen/margin16"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/vNavMenu"
+        app:layout_constraintBottom_toTopOf="@id/vClearHistory"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/vSearchLine" />
+        app:layout_constraintTop_toBottomOf="@id/vHistoryTitle" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/vClearHistory"
+        style="@style/ErrorRefreshButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:visibility="gone"
+        android:text="@string/clear_history_btn"
+        app:layout_constraintEnd_toEndOf="@+id/vTrackList"
+        app:layout_constraintStart_toStartOf="@+id/vTrackList"
+        app:layout_constraintTop_toBottomOf="@+id/vTrackList"
+        app:layout_constraintBottom_toTopOf="@id/vNavMenu"/>
 
     <LinearLayout
         android:id="@+id/vSearchPlaceholder"
