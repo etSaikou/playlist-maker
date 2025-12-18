@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/player"
+    android:background="@color/wb_bg">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/wb_bg">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_arrow_back_16"
+            app:titleTextAppearance="@style/ToolbarText"
+            app:titleTextColor="@color/toolbar_text" />
+
+        <ImageView
+            android:id="@+id/vAlbumArt"
+            android:layout_width="0dp"
+            android:layout_height="312dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="26dp"
+            android:src="@drawable/ic_placeholder_45"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+        <TextView
+            android:id="@+id/vTrackNamePlayer"
+            android:textColor="@color/settings_text_button"
+            android:layout_width="0dp"
+            android:layout_marginTop="24dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:fontFamily="@font/ys_display"
+            android:text="Some Smell like u know"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="@id/vAlbumArt"
+            app:layout_constraintStart_toStartOf="@+id/vAlbumArt"
+            app:layout_constraintTop_toBottomOf="@id/vAlbumArt" />
+
+        <TextView
+            android:id="@+id/vArtistName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/ys_display"
+            android:maxLines="1"
+            android:text="Artist"
+            android:textColor="@color/settings_text_button"
+            android:textSize="14sp"
+
+            app:layout_constraintEnd_toEndOf="@id/vTrackNamePlayer"
+            app:layout_constraintStart_toStartOf="@+id/vTrackNamePlayer"
+            app:layout_constraintTop_toBottomOf="@id/vTrackNamePlayer" />
+
+        <ImageButton
+            android:id="@+id/vPlayButton"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="30dp"
+            android:backgroundTint="@color/wb_bg"
+            android:src="@drawable/ic_play_button_light_83"
+            app:layout_constraintEnd_toEndOf="@+id/vArtistName"
+            app:layout_constraintStart_toStartOf="@+id/vArtistName"
+            app:layout_constraintTop_toBottomOf="@+id/vArtistName"
+            app:tint="@color/settings_text_button" />
+
+        <ImageButton
+            android:id="@+id/vCollectionButton"
+            android:layout_width="51dp"
+            android:layout_height="51dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="25dp"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/ic_add_to_collection_light_not_toggled_51"
+            app:layout_constraintBottom_toBottomOf="@+id/vPlayButton"
+            app:layout_constraintStart_toStartOf="@+id/vArtistName"
+            app:layout_constraintTop_toTopOf="@+id/vPlayButton"
+             />
+        <ImageButton
+            android:id="@+id/vFavoriteButton"
+            android:layout_width="51dp"
+            android:layout_height="51dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="25dp"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/ic_favorite_button_light_not_toggled_51"
+            app:layout_constraintBottom_toBottomOf="@+id/vPlayButton"
+            app:layout_constraintEnd_toEndOf="@+id/vArtistName"
+            app:layout_constraintTop_toTopOf="@+id/vPlayButton"
+            />
+
+        <TextView
+            android:id="@+id/vTrackTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/ys_display"
+            android:gravity="center"
+            android:text="0:00"
+            android:textColor="@color/settings_text_button"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/vPlayButton"
+            app:layout_constraintStart_toStartOf="@id/vPlayButton"
+            app:layout_constraintTop_toBottomOf="@id/vPlayButton" />
+
+        <TextView
+            android:id="@+id/vDurationTitle"
+            style="@style/TrackDescriptionTitles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin16"
+            android:layout_marginTop="30dp"
+            android:text="Длительность"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vTrackTime" />
+
+        <TextView
+            android:id="@+id/vAlbumNameTitle"
+            style="@style/TrackDescriptionTitles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin16"
+            android:layout_marginTop="@dimen/margin16"
+            android:text="Альбом"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/vDurationTitle" />
+
+        <TextView
+            android:id="@+id/vYearTitle"
+            style="@style/TrackDescriptionTitles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin16"
+            android:layout_marginTop="@dimen/margin16"
+            android:text="Год"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/vAlbumNameTitle" />
+        <TextView
+            android:id="@+id/vGenreTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TrackDescriptionTitles"
+            android:text="Жанр"
+            android:layout_marginTop="@dimen/margin16"
+            android:layout_marginStart="@dimen/margin16"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/vYearTitle" />
+        <TextView
+            android:id="@+id/vCountryTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TrackDescriptionTitles"
+            android:text="Страна"
+            android:layout_marginTop="@dimen/margin16"
+            android:layout_marginStart="@dimen/margin16"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/vGenreTitle"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/vDurationContent"
+            style="@style/TrackDescriptionContent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin16"
+            android:text="0:00"
+            app:layout_constraintBottom_toBottomOf="@+id/vDurationTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/vDurationTitle"
+            app:layout_constraintTop_toTopOf="@+id/vDurationTitle" />
+
+        <TextView
+            android:id="@+id/vAlbumNameContent"
+            style="@style/TrackDescriptionContent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin16"
+            android:text="Альбом"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/vAlbumNameTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/vAlbumNameTitle"
+            app:layout_constraintTop_toTopOf="@+id/vAlbumNameTitle" />
+
+        <TextView
+            android:id="@+id/vYearContent"
+            style="@style/TrackDescriptionContent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin16"
+            android:text="1923"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/vYearTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/vYearTitle"
+            app:layout_constraintTop_toTopOf="@id/vYearTitle" />
+
+        <TextView
+            android:id="@+id/vGenreContent"
+            style="@style/TrackDescriptionContent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Rock"
+            android:layout_marginEnd="@dimen/margin16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/vGenreTitle"
+            app:layout_constraintTop_toTopOf="@+id/vGenreTitle"
+            app:layout_constraintBottom_toBottomOf="@id/vGenreTitle"/>
+        <TextView
+            android:id="@+id/vCountryContent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin16"
+            style="@style/TrackDescriptionContent"
+            android:text="Страна"
+            app:layout_constraintStart_toEndOf="@id/vCountryTitle"
+            app:layout_constraintTop_toTopOf="@id/vCountryTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/vCountryTitle"/>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
