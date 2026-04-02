@@ -29,24 +29,14 @@ class PlayerActivity : AppCompatActivity() {
     private var mediaPlayer = MediaPlayer()
     private val playButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<ImageButton>(R.id.vPlayButton) }
     private val trackTime by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.vTrackTime) }
-
+    private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
     private val playerHandler = Handler(Looper.getMainLooper())
     private val trackTimeRunnable = object: Runnable {
         override fun run() {
-            trackTime.text = SimpleDateFormat(
-                "mm:ss",
-                Locale.getDefault()
-            ).format(mediaPlayer.currentPosition) ?: "00:00"
+            trackTime.text = dateFormat.format(mediaPlayer.currentPosition) ?: "00:00"
             playerHandler.postDelayed(this, Const.PLAYER_CHECK)
         }
 
-    }
-
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
     }
 
     private var playerState = STATE_DEFAULT
@@ -132,7 +122,7 @@ class PlayerActivity : AppCompatActivity() {
         }
         mediaPlayer.setOnCompletionListener {
             playerState = STATE_PREPARED
-            trackTime.text = "00:00"
+            trackTime.text = getString(R.string.zero_timer)
             playerHandler.removeCallbacks(trackTimeRunnable)
             Glide.with(this)
                 .load(R.drawable.ic_play_button_light_83)
@@ -187,4 +177,10 @@ class PlayerActivity : AppCompatActivity() {
         playerHandler.removeCallbacks(trackTimeRunnable)
     }
 
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+    }
 }

@@ -108,6 +108,7 @@ class SearchActivity : AppCompatActivity() {
     private val searchHandler = Handler(Looper.getMainLooper())
     private val clickHandler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
+    lateinit var searchRunnable: Runnable
 
 
     private val searchCallback = object : Callback<ResponseWrapper> {
@@ -230,7 +231,7 @@ class SearchActivity : AppCompatActivity() {
                 savedLine = it.toString()
                 setTrackAdapter(false)
 
-                val searchRunnable = Runnable { searchRequest(it.toString()) }
+                searchRunnable = Runnable { searchRequest(it.toString()) }
                 searchDebounce(searchRunnable)
 
             } else {
@@ -293,8 +294,11 @@ class SearchActivity : AppCompatActivity() {
             historyAdapter.onItemClickCallback {
                 openPlayer(this, it)
             }
-            clearHistory.visibility = View.VISIBLE
-            historyTitle.visibility = View.VISIBLE
+            if (!historyList.isEmpty()) {
+                clearHistory.visibility = View.VISIBLE
+                historyTitle.visibility = View.VISIBLE
+            }
+
         } else {
             trackListView.adapter = trackAdapter
             clearHistory.visibility = View.GONE
@@ -351,4 +355,8 @@ class SearchActivity : AppCompatActivity() {
         contentWrapper.vis(!isSearching)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        searchHandler.removeCallbacks(searchRunnable)
+    }
 }
