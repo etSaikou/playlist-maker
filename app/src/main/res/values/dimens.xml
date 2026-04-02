@@ -9,4 +9,5 @@
     <dimen name="icon_size_24">24dp</dimen>
     <dimen name="track_divider_size_3dp">3dp</dimen>
     <dimen name="track_divider_margin_5dp">5dp</dimen>
+    <dimen name="progress_bar_size_44dp">44dp</dimen>
 </resources>

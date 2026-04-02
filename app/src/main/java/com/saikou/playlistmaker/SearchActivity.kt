@@ -3,8 +3,9 @@ package com.saikou.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.media.AudioManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -13,11 +14,13 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doAfterTextChanged
@@ -29,7 +32,9 @@ import com.saikou.playlistmaker.entity.Track
 import com.saikou.playlistmaker.global.Const
 import com.saikou.playlistmaker.global.SearchHistory
 import com.saikou.playlistmaker.global.serialize
+import com.saikou.playlistmaker.global.vis
 import com.saikou.playlistmaker.track_adapter.TrackAdapter
+import kotlinx.coroutines.Runnable
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,7 +42,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 
+
 const val BASE_URL = "https://itunes.apple.com"
+
 
 class SearchActivity : AppCompatActivity() {
     private val retrofit = Retrofit.Builder()
@@ -68,6 +75,8 @@ class SearchActivity : AppCompatActivity() {
             R.id.vRefreshButton
         )
     }
+    private val progressBar by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<ProgressBar>(R.id.vSearchProgress) }
+    private val contentWrapper by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<ConstraintLayout>(R.id.vContentWrapper) }
     private val searchBar by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<EditText>(R.id.vSearchLine) }
     private val clearButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<ImageButton>(R.id.vClearButton) }
     private val toolbar by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<Toolbar>(R.id.toolbar) }
@@ -96,11 +105,17 @@ class SearchActivity : AppCompatActivity() {
     private val trackAdapter = TrackAdapter(trackList)
     private val historyAdapter = TrackAdapter(historyList)
 
+    private val searchHandler = Handler(Looper.getMainLooper())
+    private val clickHandler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
+
+
     private val searchCallback = object : Callback<ResponseWrapper> {
         override fun onResponse(
             call: Call<ResponseWrapper>,
             response: Response<ResponseWrapper>
         ) {
+            searchVisibility(false)
             if (response.isSuccessful) {
                 trackList.clear()
                 if (response.body()?.results?.isNotEmpty() == true) {
@@ -126,6 +141,7 @@ class SearchActivity : AppCompatActivity() {
             call: Call<ResponseWrapper?>,
             t: Throwable
         ) {
+            searchVisibility(false)
             showMessage(getString(R.string.search_error_network), t.toString(), true)
         }
 
@@ -152,9 +168,18 @@ class SearchActivity : AppCompatActivity() {
         history = SearchHistory(sharedPreferences)
         searchPlaceholder.visibility = View.GONE
         val searchApi = retrofit.create<BackendApi>()
+
+        fun searchRequest(request: String){
+
+            if (request.isNotEmpty()) {
+                searchVisibility(true)
+                searchApi.search(request).enqueue(searchCallback)
+            }
+        }
 //        trackAdapter.onItemClickCallback(history::addToHistory)
         trackAdapter.onItemClickCallback {
             history.addToHistory(it)
+
             openPlayer(this, it)
         }
 
@@ -205,7 +230,9 @@ class SearchActivity : AppCompatActivity() {
                 savedLine = it.toString()
                 setTrackAdapter(false)
 
-//                searchApi.search(it.toString()).enqueue(searchCallback)
+                val searchRunnable = Runnable { searchRequest(it.toString()) }
+                searchDebounce(searchRunnable)
+
             } else {
                 setTrackAdapter(true)
             }
@@ -215,11 +242,11 @@ class SearchActivity : AppCompatActivity() {
         }
 
         refreshButton.setOnClickListener {
-            searchApi.search(savedLine).enqueue(searchCallback)
+            searchRequest(savedLine)
         }
         searchBar.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchApi.search(searchBar.text.toString()).enqueue(searchCallback)
+                searchRequest(searchBar.text.toString())
                 true
             }
             false
@@ -277,9 +304,11 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun openPlayer(context: Context,track: Track) {
-        val intent = Intent(context, PlayerActivity::class.java)
-        intent.putExtra(Const.PLAYER_TRACK_DATA, track.serialize())
-        startActivity(intent)
+        if (clickDebounce()){
+            val intent = Intent(context, PlayerActivity::class.java)
+            intent.putExtra(Const.PLAYER_TRACK_DATA, track.serialize())
+            startActivity(intent)
+        }
     }
 
     private fun showMessage(text: String, additionalMessage: String, isNetwork: Boolean) {
@@ -303,4 +332,23 @@ class SearchActivity : AppCompatActivity() {
             searchPlaceholder.visibility = View.GONE
         }
     }
+
+    private fun searchDebounce(searchRunnable: Runnable) {
+        searchHandler.removeCallbacks(searchRunnable)
+        searchHandler.postDelayed(searchRunnable, Const.SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            clickHandler.postDelayed({ isClickAllowed = true }, Const.CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+    private fun searchVisibility(isSearching: Boolean){
+        progressBar.vis(isSearching)
+        contentWrapper.vis(!isSearching)
+    }
+
 }
