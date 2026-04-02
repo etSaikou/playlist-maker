@@ -6,4 +6,5 @@ object Const {
     const val PLAYER_TRACK_DATA = "player_track_data"
     const val SEARCH_DEBOUNCE_DELAY = 2000L
     const val CLICK_DEBOUNCE_DELAY = 1000L
+    const val PLAYER_CHECK = 300L
 }
