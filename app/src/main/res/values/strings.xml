@@ -20,4 +20,5 @@
     <string name="search_refresh_button">Обновить</string>
     <string name="search_history_title">Вы искали</string>
     <string name="clear_history_btn">Очистить историю</string>
+    <string name="zero_timer">00:00</string>
 </resources>
