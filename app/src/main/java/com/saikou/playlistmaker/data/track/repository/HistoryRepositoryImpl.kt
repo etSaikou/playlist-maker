@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import androidx.core.content.edit
 import com.saikou.playlistmaker.data.track.entity.Track
+import com.saikou.playlistmaker.data.track.entity.TrackHistoryDto
 import com.saikou.playlistmaker.domain.api.HistoryRepository
 import com.saikou.playlistmaker.global.Const
 import com.saikou.playlistmaker.global.deserializeToList
@@ -35,7 +36,18 @@ class HistoryRepositoryImpl(private val context: Context): HistoryRepository {
 
 
         sharedPreferences.edit {
-            putString(Const.LAST_SEARCH, trackList.serialize())
+            putString(Const.LAST_SEARCH, trackList.map {
+                TrackHistoryDto(it.trackName,
+                    it.artistName,
+                    it.trackTimeMillis,
+                    it.artworkUrl100,
+                    it.trackId,
+                    it.collectionName,
+                    it.releaseDate?:"",
+                    it.primaryGenreName,
+                    it.country,
+                    it.previewUrl)
+            }.serialize())
         }
     }
 
@@ -46,7 +58,19 @@ class HistoryRepositoryImpl(private val context: Context): HistoryRepository {
     private fun setList() {
         trackList.clear()
         try {
-            trackList.addAll(sharedPreferences.getString(Const.LAST_SEARCH, "")?.deserializeToList(Track::class.java)
+            trackList.addAll(sharedPreferences.getString(Const.LAST_SEARCH, "")?.deserializeToList(
+                TrackHistoryDto::class.java)?.map {
+                    Track(it.trackName,
+                        it.artistName,
+                        it.trackTimeMillis,
+                        it.artworkUrl100,
+                        it.trackId,
+                        it.collectionName,
+                        it.releaseDate?:"",
+                        it.primaryGenreName,
+                        it.country,
+                        it.previewUrl)
+            }
                 ?: emptyList())
         } catch (e: Throwable) {
 

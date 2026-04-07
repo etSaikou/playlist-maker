@@ -99,7 +99,7 @@ class SearchActivity : AppCompatActivity() {
     private val searchHandler = Handler(Looper.getMainLooper())
     private val clickHandler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
-    lateinit var searchRunnable: Runnable
+    private var searchRunnable: Runnable = Runnable {}
 
     private val trackConsumer = object : TrackInteractor.TracksConsumer {
         override fun consume(foundTracks: List<Track>?) {
