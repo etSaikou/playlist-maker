@@ -1,4 +1,4 @@
-package com.saikou.playlistmaker
+package com.saikou.playlistmaker.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,13 +12,18 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.saikou.playlistmaker.global.Const
 import androidx.core.content.edit
+import com.saikou.playlistmaker.App
+import com.saikou.playlistmaker.Creator
+import com.saikou.playlistmaker.R
+import com.saikou.playlistmaker.data.settings.SettingsPreferences
 
 class SettingsActivity : AppCompatActivity() {
     private val agreementButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.vUserAgreementButton) }
     private val shareButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.vShareButton) }
     private val supportButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.vSupportButton) }
     private val toolbar by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<Toolbar>(R.id.toolbar) }
-    private val sharedPreferences by lazy(mode = LazyThreadSafetyMode.NONE) { getSharedPreferences(Const.SHARED_PREFS, MODE_PRIVATE) }
+
+    private lateinit var settingsPreferences: SettingsPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -30,12 +35,14 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
+        settingsPreferences = Creator.getSettings(this)
+
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.vThemeSwitcher)
-        themeSwitcher.isChecked = sharedPreferences.getBoolean(Const.DARK_THEME_KEY, false)
+        themeSwitcher.isChecked = settingsPreferences.getIsDarkTheme()
 
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
-            sharedPreferences.edit { putBoolean(Const.DARK_THEME_KEY, checked) }
+            settingsPreferences.setIsDarkTheme(checked)
         }
 
         toolbar.setNavigationOnClickListener {

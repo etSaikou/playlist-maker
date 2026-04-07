@@ -1,11 +1,8 @@
 package com.saikou.playlistmaker.track_adapter
 
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.saikou.playlistmaker.entity.Track
-import com.saikou.playlistmaker.global.SearchHistory
-import okhttp3.Call
+import com.saikou.playlistmaker.data.track.entity.Track
 
 class TrackAdapter(private val trackList: List<Track>) :
     RecyclerView.Adapter<TrackViewHolder>() {

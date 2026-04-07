@@ -23,16 +23,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchActivity">
+        <activity android:name=".ui.SearchActivity">
 
         </activity>
-        <activity android:name=".SettingsActivity">
+        <activity android:name=".ui.SettingsActivity">
 
         </activity>
-        <activity android:name=".MediaActivity">
+        <activity android:name=".ui.MediaActivity">
 
         </activity>
-        <activity android:name=".PlayerActivity">
+        <activity android:name=".ui.PlayerActivity">
 
         </activity>
     </application>

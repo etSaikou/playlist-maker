@@ -1,14 +1,31 @@
-package com.saikou.playlistmaker.global
+package com.saikou.playlistmaker.data.track.repository
 
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.util.Log
-import com.saikou.playlistmaker.data.track.entity.Track
 import androidx.core.content.edit
+import com.saikou.playlistmaker.data.track.entity.Track
+import com.saikou.playlistmaker.domain.api.HistoryRepository
+import com.saikou.playlistmaker.global.Const
+import com.saikou.playlistmaker.global.deserializeToList
+import com.saikou.playlistmaker.global.reAdd
+import com.saikou.playlistmaker.global.removeFirst
+import com.saikou.playlistmaker.global.serialize
 
-class SearchHistory(private val sharedPreferences: SharedPreferences) {
+class HistoryRepositoryImpl(private val context: Context): HistoryRepository {
     private val trackList = mutableSetOf<Track>()
+    private val sharedPreferences = context.getSharedPreferences(
+        Const.SHARED_PREFS,
+        MODE_PRIVATE
+    )
 
-    fun addToHistory(track: Track) {
+    override fun getTracksHistory(): List<Track> {
+        setList()
+        return trackList.toList()
+    }
+
+    override fun addTrack(track: Track) {
         setList()
         if (trackList.size == 10) {
             trackList.removeFirst()
@@ -27,12 +44,7 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
         }
     }
 
-    fun getList(): List<Track> {
-        setList()
-        return trackList.toList()
-    }
-
-    fun clearHistory() {
+    override fun clearHistory() {
         sharedPreferences.edit { putString(Const.LAST_SEARCH, "") }
     }
 
@@ -40,10 +52,11 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
         trackList.clear()
         try {
             trackList.addAll(sharedPreferences.getString(Const.LAST_SEARCH, "")?.deserializeToList(Track::class.java)
-                ?: listOf())
+                ?: emptyList())
         } catch (e: Throwable) {
             Log.e("SOMEZ", e.toString())
         }
 
     }
+
 }

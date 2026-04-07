@@ -1,4 +1,4 @@
-package com.saikou.playlistmaker.entity
+package com.saikou.playlistmaker.data.track.entity
 
 data class Track(
     val trackName: String,
