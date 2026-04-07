@@ -1,12 +1,10 @@
 package com.saikou.playlistmaker.data.track.repository
 
-import com.saikou.playlistmaker.data.track.entity.Response
 import com.saikou.playlistmaker.data.track.entity.Track
 import com.saikou.playlistmaker.data.track.entity.TrackRequest
 import com.saikou.playlistmaker.data.track.entity.TrackSearchResponse
 import com.saikou.playlistmaker.data.track.network.NetworkClient
 import com.saikou.playlistmaker.domain.api.TrackRepository
-import kotlin.String
 
 class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepository {
 
@@ -21,7 +19,7 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepos
                     it.artworkUrl100,
                     it.trackId,
                     it.collectionName,
-                    it.releaseDate,
+                    it.releaseDate?:"",
                     it.primaryGenreName,
                     it.country,
                     it.previewUrl

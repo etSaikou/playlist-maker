@@ -1,13 +1,10 @@
 package com.saikou.playlistmaker.ui
 
-import android.accounts.NetworkErrorException
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -30,30 +27,20 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
 import com.saikou.playlistmaker.Creator
 import com.saikou.playlistmaker.R
-import com.saikou.playlistmaker.data.track.entity.TrackSearchResponse
 import com.saikou.playlistmaker.data.track.entity.Track
-import com.saikou.playlistmaker.domain.api.HistoryRepository
 import com.saikou.playlistmaker.domain.api.TrackInteractor
 import com.saikou.playlistmaker.global.Const
 import com.saikou.playlistmaker.global.serialize
 import com.saikou.playlistmaker.global.vis
 import com.saikou.playlistmaker.track_adapter.TrackAdapter
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Runnable
-import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.IOException
-import kotlin.collections.orEmpty
-
-
-
 
 
 class SearchActivity : AppCompatActivity() {
 
     private val trackInteractor = Creator.provideTrackInteractor()
+    private val trackHistoryInteractor by lazy(mode = LazyThreadSafetyMode.NONE) { Creator.provideTrackHistoryInteractor(this) }
 
     private val bottomBar by lazy(mode = LazyThreadSafetyMode.NONE) {
         findViewById<BottomNavigationView>(
@@ -102,7 +89,6 @@ class SearchActivity : AppCompatActivity() {
         )
     }
 
-    private lateinit var history: HistoryRepository
     private lateinit var savedLine: String
     private val trackList = mutableListOf<Track>()
     private val historyList = mutableListOf<Track>()
@@ -141,6 +127,7 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -151,7 +138,6 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        history = Creator.getHistoryRepository(this)
         searchPlaceholder.visibility = View.GONE
 
 
@@ -174,19 +160,15 @@ class SearchActivity : AppCompatActivity() {
         }
 
         trackAdapter.onItemClickCallback {
-            history.addTrack(it)
+            trackHistoryInteractor.addTrack(it)
 
             openPlayer(this, it)
         }
 
-
-        Log.e("SOMEZ", history.getTracksHistory().size.toString())
-
-
         checkAdapter()
 
         clearHistory.setOnClickListener {
-            history.clearHistory()
+            trackHistoryInteractor.clearHistory()
             historyList.clear()
             historyAdapter.notifyDataSetChanged()
             it.visibility = View.GONE
@@ -263,14 +245,14 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun checkAdapter() {
-        setTrackAdapter(history.getTracksHistory().isNotEmpty() && trackList.isEmpty())
+        setTrackAdapter(trackHistoryInteractor.getHistory().isNotEmpty() && trackList.isEmpty())
     }
 
     private fun setTrackAdapter(isHistory: Boolean) {
         if (isHistory) {
             trackListView.adapter = historyAdapter
             historyList.clear()
-            historyList.addAll(history.getTracksHistory().reversed())
+            historyList.addAll(trackHistoryInteractor.getHistory().reversed())
             historyAdapter.notifyDataSetChanged()
             historyAdapter.onItemClickCallback {
                 openPlayer(this, it)

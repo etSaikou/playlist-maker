@@ -2,8 +2,6 @@ package com.saikou.playlistmaker.data.track.repository
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
-import android.util.Log
 import androidx.core.content.edit
 import com.saikou.playlistmaker.data.track.entity.Track
 import com.saikou.playlistmaker.domain.api.HistoryRepository
@@ -29,18 +27,15 @@ class HistoryRepositoryImpl(private val context: Context): HistoryRepository {
         setList()
         if (trackList.size == 10) {
             trackList.removeFirst()
-            Log.e("SOMEZ", "Десятка")
         }
         if (trackList.contains(track)){
             trackList.reAdd(track)
         }
         trackList.add(track)
-        Log.e("SOMEZ", "Добавлен")
+
 
         sharedPreferences.edit {
             putString(Const.LAST_SEARCH, trackList.serialize())
-        }.also {
-            Log.e("SOMEZ", "Префы?!")
         }
     }
 
@@ -54,7 +49,7 @@ class HistoryRepositoryImpl(private val context: Context): HistoryRepository {
             trackList.addAll(sharedPreferences.getString(Const.LAST_SEARCH, "")?.deserializeToList(Track::class.java)
                 ?: emptyList())
         } catch (e: Throwable) {
-            Log.e("SOMEZ", e.toString())
+
         }
 
     }

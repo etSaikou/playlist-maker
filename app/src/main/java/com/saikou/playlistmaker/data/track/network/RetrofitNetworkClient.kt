@@ -2,16 +2,15 @@ package com.saikou.playlistmaker.data.track.network
 
 import com.saikou.playlistmaker.data.track.entity.Response
 import com.saikou.playlistmaker.data.track.entity.TrackRequest
+import com.saikou.playlistmaker.global.Const.BASE_URL
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
 class RetrofitNetworkClient: NetworkClient {
 
-    private val baseUrl = "https://itunes.apple.com"
-
     private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
+        .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
