@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
+import com.saikou.playlistmaker.ui.MediaActivity
+import com.saikou.playlistmaker.ui.SearchActivity
+import com.saikou.playlistmaker.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
     private val searchButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<MaterialButton>(R.id.vSearchButton) }

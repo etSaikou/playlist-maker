@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.saikou.playlistmaker.R
-import com.saikou.playlistmaker.entity.Track
+import com.saikou.playlistmaker.data.track.entity.Track
 import com.saikou.playlistmaker.global.dpToPx
 import java.text.SimpleDateFormat
 import java.util.Locale

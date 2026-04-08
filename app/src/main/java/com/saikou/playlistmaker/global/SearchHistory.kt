@@ -2,7 +2,7 @@ package com.saikou.playlistmaker.global
 
 import android.content.SharedPreferences
 import android.util.Log
-import com.saikou.playlistmaker.entity.Track
+import com.saikou.playlistmaker.data.track.entity.Track
 import androidx.core.content.edit
 
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
