@@ -29,10 +29,12 @@ class SettingsViewModel(
     }
 
     fun setTheme(isDarkTheme: Boolean) {
+        settingsInteractor.setIsDarkTheme(isDarkTheme)
         settingsData.postValue(isDarkTheme)
     }
 
     fun observeTheme(): LiveData<Boolean> {
+        settingsData.postValue(settingsInteractor.getIsDarkTheme())
         return settingsData
     }
 
