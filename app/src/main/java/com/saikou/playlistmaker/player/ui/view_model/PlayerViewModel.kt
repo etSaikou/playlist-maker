@@ -3,29 +3,29 @@ package com.saikou.playlistmaker.player.ui.view_model
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.saikou.playlistmaker.search.data.entity.Track
+import com.saikou.playlistmaker.player.data.PlayerState
+import com.saikou.playlistmaker.player.data.PlayerStateEnum
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerViewModel(private val track: Track) : ViewModel() {
-    private val trackLiveData = MutableLiveData(track)
-
-    private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
+class PlayerViewModel(private val previewUrl: String) : ViewModel() {
 
 
-    private val progressTimeLiveData = MutableLiveData("00:00")
+    private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState(PlayerStateEnum.STATE_DEFAULT, "00:00"))
 
 
     private val mediaPlayer = MediaPlayer()
     private val handler = Handler(Looper.getMainLooper())
     private val timerRunnable = Runnable {
-        if (playerStateLiveData.value == STATE_PLAYING) {
+        if (playerStateLiveData.value?.state == PlayerStateEnum.STATE_PLAYING) {
             startTimerUpdate()
         }
     }
@@ -40,38 +40,52 @@ class PlayerViewModel(private val track: Track) : ViewModel() {
         resetTimer()
     }
 
-    fun observePlayerState(): LiveData<Int> = playerStateLiveData
-    fun observeProgressTime(): LiveData<String> = progressTimeLiveData
+    fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
+
 
     fun onPlayButtonClicked() {
-        when (playerStateLiveData.value) {
-            STATE_PLAYING -> pausePlayer()
-            STATE_PREPARED, STATE_PAUSED -> startPlayer()
+        when (playerStateLiveData.value?.state) {
+            PlayerStateEnum.STATE_PLAYING -> pausePlayer()
+            PlayerStateEnum.STATE_PREPARED, PlayerStateEnum.STATE_PAUSED -> startPlayer()
+            PlayerStateEnum.STATE_DEFAULT, null -> {}
+
         }
     }
 
+    private fun updateState(state: PlayerStateEnum) {
+        playerStateLiveData.postValue(playerStateLiveData.value.apply {
+            this?.state = state
+            Log.e("PLAYER_CHECKEZZ", "${playerStateLiveData.value?.state}")
+        })
+
+    }
+
     private fun preparePlayer() {
-        mediaPlayer.setDataSource(trackLiveData.value?.previewUrl)
+        mediaPlayer.setDataSource(previewUrl)
+
         mediaPlayer.prepareAsync()
+
         mediaPlayer.setOnPreparedListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
+            updateState(PlayerStateEnum.STATE_PREPARED)
         }
+
         mediaPlayer.setOnCompletionListener {
-            playerStateLiveData.postValue(STATE_PREPARED)
+            Log.e("PLAYER_CHECKEZZ", "AAAAAA")
+            updateState(PlayerStateEnum.STATE_PREPARED)
             resetTimer()
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
-        playerStateLiveData.postValue(STATE_PLAYING)
+        updateState(PlayerStateEnum.STATE_PLAYING)
         startTimerUpdate()
     }
 
     private fun pausePlayer() {
         pauseTimer()
         mediaPlayer.pause()
-        playerStateLiveData.postValue(STATE_PAUSED)
+        updateState(PlayerStateEnum.STATE_PAUSED)
     }
 
     fun onPause() {
@@ -79,11 +93,12 @@ class PlayerViewModel(private val track: Track) : ViewModel() {
     }
 
     private fun startTimerUpdate() {
-        progressTimeLiveData.postValue(
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(
+        playerStateLiveData.postValue(playerStateLiveData.value.apply {
+            this?.timer = SimpleDateFormat("mm:ss", Locale.getDefault()).format(
                 mediaPlayer.currentPosition
             )
-        )
+        })
+
         handler.postDelayed(timerRunnable, 200)
     }
 
@@ -93,22 +108,20 @@ class PlayerViewModel(private val track: Track) : ViewModel() {
 
     private fun resetTimer() {
         handler.removeCallbacks(timerRunnable)
-        progressTimeLiveData.postValue("00:00")
+        playerStateLiveData
+        playerStateLiveData.postValue(playerStateLiveData.value.apply {
+            this?.timer = "00:00"
+        })
     }
-
-    fun observeTrack(): LiveData<Track> = trackLiveData
 
 
     companion object {
 
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
-
-        fun getFactory(track: Track): ViewModelProvider.Factory = viewModelFactory {
+        fun getFactory(previewUrl: String): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                PlayerViewModel(track)
+                PlayerViewModel(previewUrl).also {
+                    Log.e("PLAYER_CHECKEZZ", previewUrl)
+                }
             }
         }
     }

@@ -18,6 +18,7 @@ import com.saikou.playlistmaker.global.dpToPx
 import com.saikou.playlistmaker.global.millisFormat
 import com.saikou.playlistmaker.global.replaceDimensionArtwork
 import com.saikou.playlistmaker.global.vis
+import com.saikou.playlistmaker.player.data.PlayerStateEnum
 import com.saikou.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.saikou.playlistmaker.search.data.entity.Track
 
@@ -51,47 +52,44 @@ class PlayerActivity : AppCompatActivity() {
         trackFromIntent?.let {
             viewModel = ViewModelProvider(
                 this,
-                PlayerViewModel.getFactory(trackFromIntent)
+                PlayerViewModel.getFactory(trackFromIntent.previewUrl)
             )[PlayerViewModel::class.java]
 
-            viewModel?.observeTrack()?.observe(this) {
-                Glide.with(this)
-                    .load(it.artworkUrl100.replaceDimensionArtwork())
-                    .placeholder(R.drawable.ic_placeholder_45)
-                    .centerCrop()
-                    .transform(RoundedCorners(dpToPx(16f, this)))
-                    .into(binding.vAlbumArt)
+            Glide.with(this)
+                .load(it.artworkUrl100.replaceDimensionArtwork())
+                .placeholder(R.drawable.ic_placeholder_45)
+                .centerCrop()
+                .transform(RoundedCorners(dpToPx(16f, this)))
+                .into(binding.vAlbumArt)
 
-                binding.apply {
-                    vTrackNamePlayer.text = it.trackName
-                    vArtistName.text = it.artistName
+            with(binding) {
+                vTrackNamePlayer.text = it.trackName
+                vArtistName.text = it.artistName
 
-                    vAlbumNameTitle.vis(it.collectionName.isNotEmpty())
-                    vAlbumNameContent.vis(it.collectionName.isNotEmpty())
-                    vYearTitle.vis(it.releaseDate.isNotEmpty())
-                    vYearContent.vis(it.releaseDate.isNotEmpty())
+                vAlbumNameTitle.vis(it.collectionName.isNotEmpty())
+                vAlbumNameContent.vis(it.collectionName.isNotEmpty())
+                vYearTitle.vis(it.releaseDate.isNotEmpty())
+                vYearContent.vis(it.releaseDate.isNotEmpty())
 
-                    vAlbumNameContent.text = it.collectionName.ifEmpty { "-" }
-                    vYearContent.text = it.releaseDate.substringBefore('-').ifEmpty { "-" }
-                    vGenreContent.text = it.primaryGenreName
-                    vDurationContent.text = it.trackTimeMillis.millisFormat() ?: "0:00"
-                    vCountryContent.text = it.country
+                vAlbumNameContent.text = it.collectionName.ifEmpty { "-" }
+                vYearContent.text = it.releaseDate.substringBefore('-').ifEmpty { "-" }
+                vGenreContent.text = it.primaryGenreName
+                vDurationContent.text = it.trackTimeMillis.millisFormat() ?: "0:00"
+                vCountryContent.text = it.country
+                binding.vPlayButton.setOnClickListener {
+                    viewModel?.onPlayButtonClicked()
                 }
             }
 
-            viewModel?.observeProgressTime()?.observe(this) {
-                binding.vTrackTime.text = it
-            }
-            viewModel?.observePlayerState()?.observe(this) {
-                changeButton(it == PlayerViewModel.STATE_PLAYING)
-                binding.vPlayButton.isEnabled = (it != PlayerViewModel.STATE_DEFAULT)
-            }
-
         }
 
-        binding.vPlayButton.setOnClickListener {
-            viewModel?.onPlayButtonClicked()
+        viewModel?.observePlayerState()?.observe(this) {
+            changeButton(it.state == PlayerStateEnum.STATE_PLAYING)
+            binding.vPlayButton.isEnabled = (it.state != PlayerStateEnum.STATE_DEFAULT)
+            binding.vTrackTime.text = it.timer
         }
+
+
 
     }
 

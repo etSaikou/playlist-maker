@@ -113,7 +113,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.vRefreshButton.setOnClickListener {
-            viewModel?.searchDebounce(savedLine)
+            viewModel?.searchDebounce(savedLine, true)
         }
 
         textWatcher = object : TextWatcher {
@@ -126,7 +126,7 @@ class SearchActivity : AppCompatActivity() {
                 } else {
                     viewModel?.clearSearch()
                 }
-                viewModel?.searchDebounce(changedText = s?.toString() ?: "")
+                viewModel?.searchDebounce(changedText = s?.toString() ?: "", false)
                 binding.vClearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
             }
         }
@@ -168,7 +168,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     fun showContent(trackList: List<Track>) {
-        binding.apply {
+        with(binding) {
             vContentWrapper.vis(true)
             vTrackList.vis(true)
             vSearchPlaceholder.vis(false)
@@ -181,7 +181,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     fun showError(errorMessage: String) {
-        binding.apply {
+        with(binding) {
             vContentWrapper.vis(true)
             vTrackList.vis(false)
             vSearchPlaceholder.vis(true)

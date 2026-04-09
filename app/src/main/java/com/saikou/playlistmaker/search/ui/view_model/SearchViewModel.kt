@@ -32,8 +32,8 @@ class SearchViewModel(
     private val handler = Handler(Looper.getMainLooper())
     private val showToast = SingleLiveEvent<String?>()
 
-    fun searchDebounce(changedText: String) {
-        if (latestSearchText == changedText) {
+    fun searchDebounce(changedText: String, isRefresh: Boolean) {
+        if (latestSearchText == changedText && !isRefresh ) {
             return
         }
 
