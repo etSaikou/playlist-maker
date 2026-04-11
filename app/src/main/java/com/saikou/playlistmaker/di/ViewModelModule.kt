@@ -1,5 +1,7 @@
 package com.saikou.playlistmaker.di
 
+import com.saikou.playlistmaker.media_libr.view_model.FavoriteViewModel
+import com.saikou.playlistmaker.media_libr.view_model.PlaylistViewModel
 import com.saikou.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.saikou.playlistmaker.search.ui.view_model.SearchViewModel
 import com.saikou.playlistmaker.settings.ui.view_model.SettingsViewModel
@@ -18,6 +20,13 @@ val viewModelModule = module {
 
     viewModel{
         SettingsViewModel(get(), get())
+    }
+
+    viewModel{
+        PlaylistViewModel()
+    }
+    viewModel{
+        FavoriteViewModel()
     }
 
 }
