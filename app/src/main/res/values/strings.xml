@@ -18,7 +18,14 @@
     <string name="search_error_network">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
     <string name="search_error_not_found">Ничего не нашлось</string>
     <string name="search_refresh_button">Обновить</string>
+    <string name="playlist_create_new">Новый плейлист</string>
     <string name="search_history_title">Вы искали</string>
     <string name="clear_history_btn">Очистить историю</string>
     <string name="zero_timer">00:00</string>
+    <string name="medialib_toolbar_title">Медиатека</string>
+    <string name="favorite_placeholder">Ваша медиатека пуста</string>
+    <string name="playlist_placeholder">Вы не создали\nни одного плейлиста</string>
+    <string name="favorite_tab_title">Избранные треки</string>
+    <string name="playlist_tab_title">Плейлисты</string>
+
 </resources>
