@@ -2,7 +2,7 @@ package com.saikou.playlistmaker.global
 
 import android.content.SharedPreferences
 import android.util.Log
-import com.saikou.playlistmaker.data.track.entity.Track
+import com.saikou.playlistmaker.search.data.entity.Track
 import androidx.core.content.edit
 
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
@@ -18,12 +18,12 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
             trackList.reAdd(track)
         }
         trackList.add(track)
-        Log.e("SOMEZ", "Добавлен")
+
 
         sharedPreferences.edit {
             putString(Const.LAST_SEARCH, trackList.serialize())
         }.also {
-            Log.e("SOMEZ", "Префы?!")
+
         }
     }
 
