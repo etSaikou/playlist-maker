@@ -3,26 +3,22 @@ package com.saikou.playlistmaker.player.ui.view_model
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.saikou.playlistmaker.player.data.PlayerState
 import com.saikou.playlistmaker.player.data.PlayerStateEnum
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerViewModel(private val previewUrl: String) : ViewModel() {
+class PlayerViewModel(private val previewUrl: String, private val mediaPlayer: MediaPlayer) :
+    ViewModel() {
 
 
-    private val playerStateLiveData = MutableLiveData<PlayerState>(PlayerState(PlayerStateEnum.STATE_DEFAULT, "00:00"))
+    private val playerStateLiveData =
+        MutableLiveData<PlayerState>(PlayerState(PlayerStateEnum.STATE_DEFAULT, "00:00"))
 
 
-    private val mediaPlayer = MediaPlayer()
     private val handler = Handler(Looper.getMainLooper())
     private val timerRunnable = Runnable {
         if (playerStateLiveData.value?.state == PlayerStateEnum.STATE_PLAYING) {
@@ -55,7 +51,6 @@ class PlayerViewModel(private val previewUrl: String) : ViewModel() {
     private fun updateState(state: PlayerStateEnum) {
         playerStateLiveData.postValue(playerStateLiveData.value.apply {
             this?.state = state
-            Log.e("PLAYER_CHECKEZZ", "${playerStateLiveData.value?.state}")
         })
 
     }
@@ -70,7 +65,6 @@ class PlayerViewModel(private val previewUrl: String) : ViewModel() {
         }
 
         mediaPlayer.setOnCompletionListener {
-            Log.e("PLAYER_CHECKEZZ", "AAAAAA")
             updateState(PlayerStateEnum.STATE_PREPARED)
             resetTimer()
         }
@@ -112,17 +106,5 @@ class PlayerViewModel(private val previewUrl: String) : ViewModel() {
         playerStateLiveData.postValue(playerStateLiveData.value.apply {
             this?.timer = "00:00"
         })
-    }
-
-
-    companion object {
-
-        fun getFactory(previewUrl: String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel(previewUrl).also {
-                    Log.e("PLAYER_CHECKEZZ", previewUrl)
-                }
-            }
-        }
     }
 }

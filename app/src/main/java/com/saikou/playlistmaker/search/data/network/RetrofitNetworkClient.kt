@@ -1,25 +1,15 @@
 package com.saikou.playlistmaker.search.data.network
 
 import android.content.Context
-import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.saikou.playlistmaker.R
 import com.saikou.playlistmaker.search.data.entity.Response
 import com.saikou.playlistmaker.search.data.entity.TrackRequest
-import com.saikou.playlistmaker.global.Const.BASE_URL
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 
-class RetrofitNetworkClient(private val context: Context) : NetworkClient {
+class RetrofitNetworkClient(private val context: Context, private val iTunesService: BackendApi) : NetworkClient {
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val iTunesService = retrofit.create(BackendApi::class.java)
 
     override fun doRequest(dto: Any): Response {
 
@@ -36,7 +26,7 @@ class RetrofitNetworkClient(private val context: Context) : NetworkClient {
             }
         }
 
-        val response = iTunesService.search(dto.expression).execute()
+        val response = this@RetrofitNetworkClient.iTunesService.search(dto.expression).execute()
         val body = response.body()
         return body?.apply {
             resultCode = response.code()

@@ -1,13 +1,11 @@
 package com.saikou.playlistmaker.player.ui.activity
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.saikou.playlistmaker.R
@@ -21,12 +19,20 @@ import com.saikou.playlistmaker.global.vis
 import com.saikou.playlistmaker.player.data.PlayerStateEnum
 import com.saikou.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.saikou.playlistmaker.search.data.entity.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class PlayerActivity : AppCompatActivity() {
 
-    private var viewModel: PlayerViewModel? = null
-    private lateinit var binding: ActivityPlayerBinding
 
+    private val trackFromIntent by lazy(mode = LazyThreadSafetyMode.NONE) { intent.getStringExtra(Const.PLAYER_TRACK_DATA)?.deserialize(Track::class.java) }
+
+
+    private val viewModel: PlayerViewModel by viewModel {
+        parametersOf(trackFromIntent?.previewUrl)
+    }
+
+    private lateinit var binding: ActivityPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,13 +53,7 @@ class PlayerActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        val trackFromIntent =
-            intent.getStringExtra(Const.PLAYER_TRACK_DATA)?.deserialize(Track::class.java)
         trackFromIntent?.let {
-            viewModel = ViewModelProvider(
-                this,
-                PlayerViewModel.getFactory(trackFromIntent.previewUrl)
-            )[PlayerViewModel::class.java]
 
             Glide.with(this)
                 .load(it.artworkUrl100.replaceDimensionArtwork())
@@ -77,18 +77,17 @@ class PlayerActivity : AppCompatActivity() {
                 vDurationContent.text = it.trackTimeMillis.millisFormat() ?: "0:00"
                 vCountryContent.text = it.country
                 binding.vPlayButton.setOnClickListener {
-                    viewModel?.onPlayButtonClicked()
+                    viewModel.onPlayButtonClicked()
                 }
             }
 
         }
 
-        viewModel?.observePlayerState()?.observe(this) {
+        viewModel.observePlayerState().observe(this) {
             changeButton(it.state == PlayerStateEnum.STATE_PLAYING)
             binding.vPlayButton.isEnabled = (it.state != PlayerStateEnum.STATE_DEFAULT)
             binding.vTrackTime.text = it.timer
         }
-
 
 
     }
@@ -101,6 +100,6 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        viewModel?.onPause()
+        viewModel.onPause()
     }
 }

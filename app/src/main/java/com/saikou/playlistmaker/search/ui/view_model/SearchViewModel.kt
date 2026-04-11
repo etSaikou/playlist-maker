@@ -1,23 +1,18 @@
 package com.saikou.playlistmaker.search.ui.view_model
 
-import android.content.res.Resources
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.saikou.playlistmaker.R
 import com.saikou.playlistmaker.global.Const
 import com.saikou.playlistmaker.search.data.entity.Track
 import com.saikou.playlistmaker.search.data.entity.TrackState
 import com.saikou.playlistmaker.search.domain.TrackHistoryInteractor
 import com.saikou.playlistmaker.search.domain.TrackInteractor
 import com.saikou.playlistmaker.util.SingleLiveEvent
+import java.util.concurrent.Executors
 
 class SearchViewModel(
     private val trackInteractor: TrackInteractor,
@@ -26,12 +21,11 @@ class SearchViewModel(
 
     private val searchState = MutableLiveData<TrackState>()
     private val searchHistory = MutableLiveData<List<Track>?>(null)
-
+    private val executor = Executors.newSingleThreadExecutor()
     private var latestSearchText: String? = null
 
     private val handler = Handler(Looper.getMainLooper())
     private val showToast = SingleLiveEvent<String?>()
-
     fun searchDebounce(changedText: String, isRefresh: Boolean) {
         if (latestSearchText == changedText && !isRefresh ) {
             return
@@ -52,9 +46,7 @@ class SearchViewModel(
 
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
-            renderState(
-                TrackState.Loading
-            )
+            renderState(TrackState.Loading)
 
             trackInteractor.searchTracks(newSearchText, object : TrackInteractor.TracksConsumer {
                 override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
@@ -109,6 +101,7 @@ class SearchViewModel(
     override fun onCleared() {
         super.onCleared()
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        executor.shutdownNow()
     }
 
     fun observeState(): LiveData<TrackState> {
@@ -118,17 +111,21 @@ class SearchViewModel(
     fun observeShowToast(): LiveData<String?> = showToast
 
     private fun postHistory() {
+
         searchHistory.postValue(trackHistoryInteractor.getHistory())
     }
 
-    fun observeHistory(): LiveData<List<Track>?> {
-        postHistory()
-        return searchHistory
-    }
-
     fun clearSearch() {
-        postHistory()
-        renderState(TrackState.History(searchHistory.value ?: emptyList()))
+        renderState(TrackState.Loading)
+
+        executor.execute {
+            val history = trackHistoryInteractor.getHistory()
+
+            handler.post {
+                searchHistory.value = history
+                renderState(TrackState.History(history))
+            }
+        }
     }
 
     fun clearHistory() {
@@ -145,14 +142,5 @@ class SearchViewModel(
 
     companion object {
         private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun getFactory(
-            trackInteractor: TrackInteractor,
-            trackHistoryInteractor: TrackHistoryInteractor
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(trackInteractor, trackHistoryInteractor)
-            }
-        }
     }
 }
