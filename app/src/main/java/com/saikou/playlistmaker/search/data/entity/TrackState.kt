@@ -4,6 +4,8 @@ sealed interface TrackState {
 
     object Loading : TrackState
 
+    object LoadingHistory : TrackState
+
     data class Content(
         val tracks: List<Track>
     ) : TrackState

@@ -1,81 +1,51 @@
 package com.saikou.playlistmaker.search.data.repository
 
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import androidx.core.content.edit
 import com.saikou.playlistmaker.search.data.entity.Track
 import com.saikou.playlistmaker.search.data.entity.TrackHistoryDto
+import com.saikou.playlistmaker.search.data.local.SearchHistoryStorage
 import com.saikou.playlistmaker.search.domain.HistoryRepository
-import com.saikou.playlistmaker.global.Const
-import com.saikou.playlistmaker.global.deserializeToList
-import com.saikou.playlistmaker.global.reAdd
-import com.saikou.playlistmaker.global.removeFirst
-import com.saikou.playlistmaker.global.serialize
 
-class HistoryRepositoryImpl(private val context: Context): HistoryRepository {
-    private val trackList = mutableSetOf<Track>()
-    private val sharedPreferences = context.getSharedPreferences(
-        Const.SHARED_PREFS,
-        MODE_PRIVATE
-    )
+class HistoryRepositoryImpl(private val searHistoryStorage: SearchHistoryStorage) :
+    HistoryRepository {
+
 
     override fun getTracksHistory(): List<Track> {
-        setList()
-        return trackList.toList()
+        return searHistoryStorage.getTracksHistory().map {track ->
+            Track(
+                track.trackName,
+                track.artistName,
+                track.trackTimeMillis,
+                track.artworkUrl100,
+                track.trackId,
+                track.collectionName,
+                track.releaseDate ?: "",
+                track.primaryGenreName,
+                track.country,
+                track.previewUrl
+            )
+        }
     }
 
     override fun addTrack(track: Track) {
-        setList()
-        if (trackList.size == 10) {
-            trackList.removeFirst()
-        }
-        if (trackList.contains(track)){
-            trackList.reAdd(track)
-        }
-        trackList.add(track)
+        searHistoryStorage.addTrack(
+            TrackHistoryDto(
+                track.trackName,
+                track.artistName,
+                track.trackTimeMillis,
+                track.artworkUrl100,
+                track.trackId,
+                track.collectionName,
+                track.releaseDate,
+                track.primaryGenreName,
+                track.country,
+                track.previewUrl
+            )
+        )
 
-
-        sharedPreferences.edit {
-            putString(Const.LAST_SEARCH, trackList.map {
-                TrackHistoryDto(it.trackName,
-                    it.artistName,
-                    it.trackTimeMillis,
-                    it.artworkUrl100,
-                    it.trackId,
-                    it.collectionName,
-                    it.releaseDate?:"",
-                    it.primaryGenreName,
-                    it.country,
-                    it.previewUrl)
-            }.serialize())
-        }
     }
 
     override fun clearHistory() {
-        sharedPreferences.edit { putString(Const.LAST_SEARCH, "") }
-    }
-
-    private fun setList() {
-        trackList.clear()
-        try {
-            trackList.addAll(sharedPreferences.getString(Const.LAST_SEARCH, "")?.deserializeToList(
-                TrackHistoryDto::class.java)?.map {
-                    Track(it.trackName,
-                        it.artistName,
-                        it.trackTimeMillis,
-                        it.artworkUrl100,
-                        it.trackId,
-                        it.collectionName,
-                        it.releaseDate?:"",
-                        it.primaryGenreName,
-                        it.country,
-                        it.previewUrl)
-            }
-                ?: emptyList())
-        } catch (e: Throwable) {
-
-        }
-
+        searHistoryStorage.clearHistory()
     }
 
 }

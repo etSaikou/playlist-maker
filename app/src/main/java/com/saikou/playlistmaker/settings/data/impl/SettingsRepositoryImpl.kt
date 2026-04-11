@@ -1,15 +1,11 @@
 package com.saikou.playlistmaker.settings.data.impl
 
-import android.content.Context
+import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.saikou.playlistmaker.settings.domain.SettingsRepository
 import com.saikou.playlistmaker.global.Const
+import com.saikou.playlistmaker.settings.domain.SettingsRepository
 
-class SettingsRepositoryImpl(private val context: Context): SettingsRepository {
-    private val sharedPreferences = context.getSharedPreferences(
-        Const.SHARED_PREFS,
-        Context.MODE_PRIVATE
-    )
+class SettingsRepositoryImpl(private val sharedPreferences: SharedPreferences): SettingsRepository {
 
     override fun getIsDarkTheme(): Boolean {
         return sharedPreferences.getBoolean(Const.DARK_THEME_KEY, false)

@@ -14,9 +14,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import com.saikou.playlistmaker.R
-import com.saikou.playlistmaker.creator.Creator
 import com.saikou.playlistmaker.databinding.ActivitySearchBinding
 import com.saikou.playlistmaker.global.Const
 import com.saikou.playlistmaker.global.serialize
@@ -24,30 +22,20 @@ import com.saikou.playlistmaker.global.vis
 import com.saikou.playlistmaker.player.ui.activity.PlayerActivity
 import com.saikou.playlistmaker.search.data.entity.Track
 import com.saikou.playlistmaker.search.data.entity.TrackState
-import com.saikou.playlistmaker.search.ui.view_model.SearchViewModel
 import com.saikou.playlistmaker.search.ui.track_adapter.TrackAdapter
-import kotlin.lazy
+import com.saikou.playlistmaker.search.ui.view_model.SearchViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
-    private val trackInteractor by lazy(mode = LazyThreadSafetyMode.NONE) {
-        Creator.provideTrackInteractor(
-            this
-        )
-    }
-    private val trackHistoryInteractor by lazy(mode = LazyThreadSafetyMode.NONE) {
-        Creator.provideTrackHistoryInteractor(
-            this
-        )
-    }
     private lateinit var binding: ActivitySearchBinding
-    private var viewModel: SearchViewModel? = null
+    private val viewModel by viewModel<SearchViewModel>()
     private var textWatcher: TextWatcher? = null
 
     private lateinit var savedLine: String
 
     private val trackAdapter = TrackAdapter {
-        viewModel?.addToHistory(it)
+        viewModel.addToHistory(it)
         openPlayer(this, it)
     }.apply {
         load(emptyList())
@@ -69,22 +57,17 @@ class SearchActivity : AppCompatActivity() {
         }
         binding.vTrackList.adapter = trackAdapter
 
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getFactory(trackInteractor, trackHistoryInteractor)
-        )[SearchViewModel::class.java]
-
-        viewModel?.observeState()?.observe(this) {
+        viewModel.observeState().observe(this) {
             render(it)
         }
-        viewModel?.observeShowToast()?.observe(this) {
+        viewModel.observeShowToast().observe(this) {
             showToast(it)
         }
 
         binding.vSearchPlaceholder.visibility = View.GONE
 
         binding.vClearHistory.setOnClickListener {
-            viewModel?.clearHistory()
+            viewModel.clearHistory()
             trackAdapter.clear()
             it.visibility = View.GONE
             binding.vHistoryTitle.visibility = View.GONE
@@ -100,7 +83,7 @@ class SearchActivity : AppCompatActivity() {
 
         binding.vSearchLine.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus && binding.vSearchLine.text.isNullOrEmpty()) {
-                viewModel?.clearSearch()
+                viewModel.clearSearch()
             }
         }
 
@@ -109,11 +92,11 @@ class SearchActivity : AppCompatActivity() {
             trackAdapter.clear()
             inputMethodManager.hideSoftInputFromWindow(binding.vSearchLine.windowToken, 0)
             binding.vSearchPlaceholder.visibility = View.GONE
-            viewModel?.clearSearch()
+            viewModel.clearSearch()
         }
 
         binding.vRefreshButton.setOnClickListener {
-            viewModel?.searchDebounce(savedLine, true)
+            viewModel.searchDebounce(savedLine, true)
         }
 
         textWatcher = object : TextWatcher {
@@ -124,9 +107,9 @@ class SearchActivity : AppCompatActivity() {
                 if (!s.isNullOrEmpty()) {
                     savedLine = s.toString()
                 } else {
-                    viewModel?.clearSearch()
+                    viewModel.clearSearch()
                 }
-                viewModel?.searchDebounce(changedText = s?.toString() ?: "", false)
+                viewModel.searchDebounce(changedText = s?.toString() ?: "", false)
                 binding.vClearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
             }
         }
@@ -204,6 +187,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     fun showHistory(tracks: List<Track>) {
+
         showContent(tracks.reversed())
         binding.vClearHistory.vis(!tracks.isEmpty())
         binding.vHistoryTitle.vis(!tracks.isEmpty())
@@ -220,6 +204,7 @@ class SearchActivity : AppCompatActivity() {
             is TrackState.Error -> showError(state.message)
             is TrackState.Empty -> showEmpty(state.message)
             is TrackState.History -> showHistory(state.trackHistory)
+            is TrackState.LoadingHistory -> showLoading()
         }
     }
 
