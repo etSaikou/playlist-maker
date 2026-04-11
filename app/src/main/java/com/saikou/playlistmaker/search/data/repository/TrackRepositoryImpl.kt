@@ -1,7 +1,5 @@
 package com.saikou.playlistmaker.search.data.repository
 
-import android.content.res.Resources
-import com.saikou.playlistmaker.R
 import com.saikou.playlistmaker.search.data.entity.Track
 import com.saikou.playlistmaker.search.data.entity.TrackRequest
 import com.saikou.playlistmaker.search.data.entity.TrackSearchResponse
