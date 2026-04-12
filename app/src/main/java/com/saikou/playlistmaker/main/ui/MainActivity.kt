@@ -1,30 +1,26 @@
 package com.saikou.playlistmaker.main.ui
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.button.MaterialButton
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.saikou.playlistmaker.R
-import com.saikou.playlistmaker.search.ui.activity.SearchActivity
-import com.saikou.playlistmaker.settings.ui.activity.SettingsActivity
-import com.saikou.playlistmaker.media_libr.ui.MediaActivity
+import com.saikou.playlistmaker.databinding.ActivityMainBinding
+import com.saikou.playlistmaker.global.vis
 
 class MainActivity : AppCompatActivity() {
-    private val searchButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<MaterialButton>(
-        R.id.vSearchButton) }
-    private val mediaButton by lazy(mode = LazyThreadSafetyMode.NONE) { findViewById<MaterialButton>(
-        R.id.vMediaButton) }
-    private val settingsButton by lazy(mode = LazyThreadSafetyMode.NONE){ findViewById<MaterialButton>(
-        R.id.vSettingsButton) }
+
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -33,18 +29,25 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        binding.bottomNavMenu.setupWithNavController(navController)
+        binding.toolbar.setupWithNavController(navController)
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.playerFragment, R.id.termsFragment -> {
+                    binding.toolbar.navigationIcon =
+                        AppCompatResources.getDrawable(this, R.drawable.ic_arrow_back_16)
+                    binding.bottomNavMenu.vis(false)
+                }
 
-        searchButton.setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
-        }
-
-        mediaButton.setOnClickListener {
-            startActivity(Intent(this, MediaActivity::class.java))
-        }
-
-        settingsButton.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
+                else -> {
+                    binding.toolbar.navigationIcon = null
+                    binding.bottomNavMenu.vis(true)
+                }
+            }
         }
 
     }

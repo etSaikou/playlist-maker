@@ -8,7 +8,8 @@ import com.saikou.playlistmaker.search.data.entity.Response
 import com.saikou.playlistmaker.search.data.entity.TrackRequest
 
 
-class RetrofitNetworkClient(private val context: Context, private val iTunesService: BackendApi) : NetworkClient {
+class RetrofitNetworkClient(private val context: Context, private val iTunesService: BackendApi) :
+    NetworkClient {
 
 
     override fun doRequest(dto: Any): Response {
@@ -26,7 +27,15 @@ class RetrofitNetworkClient(private val context: Context, private val iTunesServ
             }
         }
 
-        val response = this@RetrofitNetworkClient.iTunesService.search(dto.expression).execute()
+        val response = try {
+            this@RetrofitNetworkClient.iTunesService.search(dto.expression).execute()
+        } catch (e: Exception) {
+            return Response().apply {
+                resultCode = -1
+                resultStateMessage = context.getString(R.string.search_error_network)
+                resultAdditionalMessage = e.localizedMessage
+            }
+        }
         val body = response.body()
         return body?.apply {
             resultCode = response.code()
@@ -41,7 +50,7 @@ class RetrofitNetworkClient(private val context: Context, private val iTunesServ
     }
 
     override fun emptyMessage(): String? {
-       return context.getString(R.string.search_error_not_found)
+        return context.getString(R.string.search_error_not_found)
     }
 
     private fun isConnected(): Boolean {

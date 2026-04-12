@@ -1,34 +1,32 @@
-package com.saikou.playlistmaker.search.ui.activity
+package com.saikou.playlistmaker.search.ui.fragment
 
-import android.content.Context
-import android.content.Intent
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.fragment.findNavController
 import com.saikou.playlistmaker.R
-import com.saikou.playlistmaker.databinding.ActivitySearchBinding
+import com.saikou.playlistmaker.databinding.FragmentSearchBinding
 import com.saikou.playlistmaker.global.Const
 import com.saikou.playlistmaker.global.serialize
 import com.saikou.playlistmaker.global.vis
-import com.saikou.playlistmaker.player.ui.activity.PlayerActivity
+import com.saikou.playlistmaker.player.ui.fragment.PlayerFragment
 import com.saikou.playlistmaker.search.data.entity.Track
 import com.saikou.playlistmaker.search.data.entity.TrackState
 import com.saikou.playlistmaker.search.ui.track_adapter.TrackAdapter
 import com.saikou.playlistmaker.search.ui.view_model.SearchViewModel
+import com.saikou.playlistmaker.util.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
-    private lateinit var binding: ActivitySearchBinding
     private val viewModel by viewModel<SearchViewModel>()
     private var textWatcher: TextWatcher? = null
 
@@ -36,7 +34,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val trackAdapter = TrackAdapter {
         viewModel.addToHistory(it)
-        openPlayer(this, it)
+        openPlayer(it)
     }.apply {
         load(emptyList())
     }
@@ -44,23 +42,21 @@ class SearchActivity : AppCompatActivity() {
     private val clickHandler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentSearchBinding {
+        return FragmentSearchBinding.inflate(inflater, container, false)
+    }
 
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.search)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.vTrackList.adapter = trackAdapter
 
-        viewModel.observeState().observe(this) {
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
-        viewModel.observeShowToast().observe(this) {
+        viewModel.observeShowToast().observe(viewLifecycleOwner) {
             showToast(it)
         }
 
@@ -73,13 +69,10 @@ class SearchActivity : AppCompatActivity() {
             binding.vHistoryTitle.visibility = View.GONE
         }
 
-
-        binding.toolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
         savedLine = savedInstanceState?.getString(SEARCH_TAG) ?: ""
 
-        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager =
+            context?.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
         binding.vSearchLine.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus && binding.vSearchLine.text.isNullOrEmpty()) {
@@ -115,12 +108,6 @@ class SearchActivity : AppCompatActivity() {
         }
         textWatcher?.let { binding.vSearchLine.addTextChangedListener(it) }
         binding.vSearchLine.setText(savedLine)
-        binding.vNavMenu.visibility = View.GONE
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        savedLine = savedInstanceState.getString(SEARCH_TAG) ?: ""
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -128,11 +115,17 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(SEARCH_TAG, binding.vSearchLine.text.toString())
     }
 
-    private fun openPlayer(context: Context, track: Track) {
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        savedLine = savedInstanceState?.getString(SEARCH_TAG) ?: ""
+    }
+
+    private fun openPlayer(track: Track) {
         if (clickDebounce()) {
-            val intent = Intent(context, PlayerActivity::class.java)
-            intent.putExtra(Const.PLAYER_TRACK_DATA, track.serialize())
-            startActivity(intent)
+            findNavController().navigate(
+                R.id.action_searchFragment_to_playerFragment,
+                PlayerFragment.createArgs(track.serialize() ?: "")
+            )
         }
     }
 
@@ -194,7 +187,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     fun showToast(message: String?) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
     fun render(state: TrackState) {
@@ -206,11 +199,6 @@ class SearchActivity : AppCompatActivity() {
             is TrackState.History -> showHistory(state.trackHistory)
             is TrackState.LoadingHistory -> showLoading()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        textWatcher?.let { binding.vSearchLine.removeTextChangedListener(it) }
     }
 
     companion object {
