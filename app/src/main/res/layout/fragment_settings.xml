@@ -6,18 +6,9 @@
     android:layout_height="match_parent"
     android:id="@+id/settings"
     android:orientation="vertical"
-    tools:context=".settings.ui.activity.SettingsActivity"
-    android:background="@color/wb_bg">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_height"
-        app:navigationIcon="@drawable/ic_arrow_back_16"
-
-        app:title="@string/btn_settings"
-        app:titleTextAppearance="@style/ToolbarText"
-        app:titleTextColor="@color/toolbar_text" />
+    tools:context=".settings.ui.fragment.SettingsFragment"
+    android:background="@color/wb_bg"
+    >
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         style="@style/TextButtonSettings"

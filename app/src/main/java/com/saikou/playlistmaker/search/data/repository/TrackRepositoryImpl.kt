@@ -13,7 +13,7 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepos
         val response = networkClient.doRequest(TrackRequest(expression))
         return when (response.resultCode) {
             -1 -> {
-                Resource.Error(response.resultStateMessage)
+                Resource.Error(response.resultStateMessage, response.resultAdditionalMessage)
             }
             200 -> {
                 Resource.Success(((response as TrackSearchResponse).results.map {
@@ -32,7 +32,7 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepos
                 }))
             }
             else ->  {
-                Resource.Error(response.resultStateMessage)
+                Resource.Error(response.resultStateMessage, null)
             }
         }
     }

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.saikou.playlistmaker.databinding.FragmentPlaylistBinding
-import com.saikou.playlistmaker.media_libr.view_model.PlaylistViewModel
+import com.saikou.playlistmaker.media_libr.ui.view_model.PlaylistViewModel
 import com.saikou.playlistmaker.util.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

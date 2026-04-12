@@ -17,8 +17,8 @@ class SettingsViewModel(
         sharingInteractor.shareApp()
     }
 
-    fun openTerms() {
-        sharingInteractor.openTerms()
+    fun getLinkTerms(): String {
+        return sharingInteractor.getLinkTerms()
     }
 
     fun openSupport() {
