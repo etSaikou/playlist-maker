@@ -1,6 +1,5 @@
 package com.saikou.playlistmaker.search.domain.impl
 
-import android.util.Log
 import com.saikou.playlistmaker.search.domain.TrackInteractor
 import com.saikou.playlistmaker.search.domain.TrackRepository
 import java.util.concurrent.Executors
