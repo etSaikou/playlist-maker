@@ -4,9 +4,9 @@ import com.saikou.playlistmaker.search.data.entity.Track
 
 interface TrackInteractor {
     fun searchTracks(expression: String, consumer: TracksConsumer)
-    fun sendEmptyMessage() : String?
+    fun sendEmptyMessage(): String?
 
     interface TracksConsumer {
-        fun consume(foundTracks: List<Track>?, errorMessage: String?)
+        fun consume(foundTracks: List<Track>?, errorMessage: String?, additionalMessage: String?)
     }
 }

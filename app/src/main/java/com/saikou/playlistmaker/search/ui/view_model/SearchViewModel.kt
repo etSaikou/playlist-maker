@@ -49,7 +49,7 @@ class SearchViewModel(
             renderState(TrackState.Loading)
 
             trackInteractor.searchTracks(newSearchText, object : TrackInteractor.TracksConsumer {
-                override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
+                override fun consume(foundTracks: List<Track>?, errorMessage: String?, additionalMessage: String?) {
                     handler.post {
 
                         val tracks = mutableListOf<Track>()
@@ -65,7 +65,7 @@ class SearchViewModel(
                                     )
                                 )
 
-//                                showToast.postValue(errorMessage)
+                                if (!additionalMessage.isNullOrEmpty()) showToast.postValue(additionalMessage)
 
                             }
 

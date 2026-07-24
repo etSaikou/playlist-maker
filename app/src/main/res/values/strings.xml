@@ -9,6 +9,7 @@
     <string name="settings_share">Поделиться приложением</string>
     <string name="settings_support">Написать в поддержку</string>
     <string name="settings_agreement">Пользовательское соглашение</string>
+    <string name="terms_title">Соглашение</string>
 
     <string name="agreement_link">https://yandex.ru/legal/practicum_offer/ru/</string>
     <string name="android_dev_link">https://practicum.yandex.ru/android-developer/?from=catalog</string>

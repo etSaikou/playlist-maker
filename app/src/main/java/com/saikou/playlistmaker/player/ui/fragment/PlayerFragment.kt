@@ -1,16 +1,14 @@
-package com.saikou.playlistmaker.player.ui.activity
+package com.saikou.playlistmaker.player.ui.fragment
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.saikou.playlistmaker.R
-import com.saikou.playlistmaker.databinding.ActivityPlayerBinding
-import com.saikou.playlistmaker.global.Const
+import com.saikou.playlistmaker.databinding.FragmentPlayerBinding
 import com.saikou.playlistmaker.global.deserialize
 import com.saikou.playlistmaker.global.dpToPx
 import com.saikou.playlistmaker.global.millisFormat
@@ -19,39 +17,32 @@ import com.saikou.playlistmaker.global.vis
 import com.saikou.playlistmaker.player.data.PlayerStateEnum
 import com.saikou.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.saikou.playlistmaker.search.data.entity.Track
+import com.saikou.playlistmaker.util.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import kotlin.getValue
+import kotlin.text.ifEmpty
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
 
-
-    private val trackFromIntent by lazy(mode = LazyThreadSafetyMode.NONE) { intent.getStringExtra(Const.PLAYER_TRACK_DATA)?.deserialize(Track::class.java) }
-
-
+    private val trackFromIntent by lazy(mode = LazyThreadSafetyMode.NONE) {
+        requireArguments().getString(ARGS_TRACK)?.deserialize(
+            Track::class.java
+        )
+    }
     private val viewModel: PlayerViewModel by viewModel {
         parametersOf(trackFromIntent?.previewUrl)
     }
 
-    private lateinit var binding: ActivityPlayerBinding
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentPlayerBinding {
+        return FragmentPlayerBinding.inflate(inflater, container, false)
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
-
-        binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.player)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         trackFromIntent?.let {
 
@@ -59,7 +50,7 @@ class PlayerActivity : AppCompatActivity() {
                 .load(it.artworkUrl100.replaceDimensionArtwork())
                 .placeholder(R.drawable.ic_placeholder_45)
                 .centerCrop()
-                .transform(RoundedCorners(dpToPx(16f, this)))
+                .transform(RoundedCorners(dpToPx(16f, context)))
                 .into(binding.vAlbumArt)
 
             with(binding) {
@@ -76,6 +67,7 @@ class PlayerActivity : AppCompatActivity() {
                 vGenreContent.text = it.primaryGenreName
                 vDurationContent.text = it.trackTimeMillis.millisFormat() ?: "0:00"
                 vCountryContent.text = it.country
+
                 binding.vPlayButton.setOnClickListener {
                     viewModel.onPlayButtonClicked()
                 }
@@ -83,13 +75,11 @@ class PlayerActivity : AppCompatActivity() {
 
         }
 
-        viewModel.observePlayerState().observe(this) {
+        viewModel.observePlayerState().observe(viewLifecycleOwner) {
             changeButton(it.state == PlayerStateEnum.STATE_PLAYING)
             binding.vPlayButton.isEnabled = (it.state != PlayerStateEnum.STATE_DEFAULT)
             binding.vTrackTime.text = it.timer
         }
-
-
     }
 
     private fun changeButton(isPlaying: Boolean) {
@@ -101,5 +91,12 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
+    }
+
+    companion object {
+        private const val ARGS_TRACK = "track_info"
+
+        fun createArgs(track: String): Bundle =
+            bundleOf(ARGS_TRACK to track)
     }
 }

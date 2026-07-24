@@ -1,6 +1,5 @@
 package com.saikou.playlistmaker.search.domain.impl
 
-import android.util.Log
 import com.saikou.playlistmaker.search.domain.TrackInteractor
 import com.saikou.playlistmaker.search.domain.TrackRepository
 import java.util.concurrent.Executors
@@ -15,7 +14,7 @@ class TrackInteractorImpl(private val repository: TrackRepository): TrackInterac
     ) {
         executor.execute {
             val response = repository.searchTracks(expression)
-            consumer.consume(response.data,response.message)
+            consumer.consume(response.data,response.message, response.additionalMessage )
         }
     }
 

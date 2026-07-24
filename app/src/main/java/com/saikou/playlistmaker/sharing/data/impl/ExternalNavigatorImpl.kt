@@ -15,8 +15,8 @@ class ExternalNavigatorImpl(private val context: Context): ExternalNavigator {
         context.startActivity(shareIntent)
     }
 
-    override fun openLink() {
-        context.startActivity(Intent(Intent.ACTION_VIEW, context.getString(R.string.agreement_link).toUri()).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) })
+    override fun getLink(): String {
+        return context.getString(R.string.agreement_link)
     }
 
     override fun openEmail() {

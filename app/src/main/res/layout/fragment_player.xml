@@ -5,22 +5,12 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/player"
-    android:background="@color/wb_bg">
+    android:background="@color/wb_bg"
+    tools:context=".player.ui.fragment.PlayerFragment">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/wb_bg">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/ic_arrow_back_16"
-            app:titleTextAppearance="@style/ToolbarText"
-            app:titleTextColor="@color/toolbar_text" />
 
         <ImageView
             android:id="@+id/vAlbumArt"
@@ -31,7 +21,7 @@
             android:src="@drawable/ic_placeholder_45"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/vTrackNamePlayer"
@@ -231,8 +221,5 @@
             app:layout_constraintTop_toTopOf="@id/vCountryTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/vCountryTitle"/>
-
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
