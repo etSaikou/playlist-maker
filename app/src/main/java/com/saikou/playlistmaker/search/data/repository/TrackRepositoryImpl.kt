@@ -6,36 +6,42 @@ import com.saikou.playlistmaker.search.data.entity.TrackSearchResponse
 import com.saikou.playlistmaker.search.data.network.NetworkClient
 import com.saikou.playlistmaker.search.domain.TrackRepository
 import com.saikou.playlistmaker.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepository {
 
-    override fun searchTracks(expression: String): Resource<List<Track>> {
+    override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(TrackRequest(expression))
-        return when (response.resultCode) {
+        when (response.resultCode) {
             -1 -> {
-                Resource.Error(response.resultStateMessage, response.resultAdditionalMessage)
+                emit(Resource.Error(response.resultStateMessage, response.resultAdditionalMessage))
             }
+
             200 -> {
-                Resource.Success(((response as TrackSearchResponse).results.map {
-                    Track(
-                        it.trackName,
-                        it.artistName,
-                        it.trackTimeMillis,
-                        it.artworkUrl100,
-                        it.trackId,
-                        it.collectionName,
-                        it.releaseDate?:"",
-                        it.primaryGenreName,
-                        it.country,
-                        it.previewUrl
-                    )
-                }))
+                with(response as TrackSearchResponse) {
+                    val data = response.results.map {
+                        Track(
+                            it.trackName,
+                            it.artistName,
+                            it.trackTimeMillis,
+                            it.artworkUrl100,
+                            it.trackId,
+                            it.collectionName,
+                            it.releaseDate ?: "",
+                            it.primaryGenreName,
+                            it.country,
+                            it.previewUrl
+                        )
+                    }
+                    emit(Resource.Success(data))
+                }
+
             }
-            else ->  {
-                Resource.Error(response.resultStateMessage, null)
-            }
+            else -> emit(Resource.Error(message = response.resultStateMessage, null))
         }
     }
+
 
     override fun emptyMessage(): String? {
         return networkClient.emptyMessage()
