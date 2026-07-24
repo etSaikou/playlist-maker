@@ -6,15 +6,16 @@ import android.net.NetworkCapabilities
 import com.saikou.playlistmaker.R
 import com.saikou.playlistmaker.search.data.entity.Response
 import com.saikou.playlistmaker.search.data.entity.TrackRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 class RetrofitNetworkClient(private val context: Context, private val iTunesService: BackendApi) :
     NetworkClient {
 
+    override suspend fun doRequest(dto: Any): Response {
 
-    override fun doRequest(dto: Any): Response {
-
-        if (isConnected() == false) {
+        if (!isConnected()) {
             return Response().apply {
                 resultCode = -1
                 resultStateMessage = context.getString(R.string.search_error_network)
@@ -27,25 +28,22 @@ class RetrofitNetworkClient(private val context: Context, private val iTunesServ
             }
         }
 
-        val response = try {
-            this@RetrofitNetworkClient.iTunesService.search(dto.expression).execute()
-        } catch (e: Exception) {
-            return Response().apply {
-                resultCode = -1
-                resultStateMessage = context.getString(R.string.search_error_network)
-                resultAdditionalMessage = e.localizedMessage
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = iTunesService.search(dto.expression)
+                response.apply {
+                    resultCode = 200
+                    if (this.results.isEmpty()) {
+                        resultStateMessage = context.getString(R.string.search_error_not_found)
+                    }
+                }
+            } catch (e: Exception) {
+                Response().apply {
+                    resultCode = 500
+                    resultStateMessage = context.getString(R.string.search_error_network)
+                    resultAdditionalMessage = e.localizedMessage
+                }
             }
-        }
-        val body = response.body()
-        return body?.apply {
-            resultCode = response.code()
-            if (this.results.isEmpty()) {
-                resultStateMessage = context.getString(R.string.search_error_not_found)
-            }
-        } ?: Response().apply {
-            resultCode = response.code()
-            resultStateMessage = context.getString(R.string.search_error_not_found)
-
         }
     }
 

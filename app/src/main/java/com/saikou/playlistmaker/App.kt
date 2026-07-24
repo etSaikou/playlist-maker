@@ -13,7 +13,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class App : Application() {
-
+    private val sharedPreferences: SharedPreferences by inject()
     var darkTheme = false
 
     override fun onCreate() {
@@ -23,10 +23,7 @@ class App : Application() {
             androidContext(this@App)
             modules(dataModule, repositoryModule, interactorModule, viewModelModule)
         }
-
-        val sharedPreferences: SharedPreferences by inject()
-
-        switchTheme(sharedPreferences.getBoolean(Const.DARK_THEME_KEY,false))
+        switchTheme(sharedPreferences.getBoolean(Const.DARK_THEME_KEY, false))
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {

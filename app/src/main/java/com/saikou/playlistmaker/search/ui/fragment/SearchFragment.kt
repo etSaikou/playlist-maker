@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.saikou.playlistmaker.R
 import com.saikou.playlistmaker.databinding.FragmentSearchBinding
@@ -23,6 +24,7 @@ import com.saikou.playlistmaker.search.data.entity.TrackState
 import com.saikou.playlistmaker.search.ui.track_adapter.TrackAdapter
 import com.saikou.playlistmaker.search.ui.view_model.SearchViewModel
 import com.saikou.playlistmaker.util.BindingFragment
+import com.saikou.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : BindingFragment<FragmentSearchBinding>() {
@@ -32,15 +34,8 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
     private lateinit var savedLine: String
 
-    private val trackAdapter = TrackAdapter {
-        viewModel.addToHistory(it)
-        openPlayer(it)
-    }.apply {
-        load(emptyList())
-    }
-
-    private val clickHandler = Handler(Looper.getMainLooper())
-    private var isClickAllowed = true
+    private var trackAdapter: TrackAdapter? = null
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -51,6 +46,20 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        onTrackClickDebounce = debounce<Track>(Const.CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->
+            findNavController().navigate(
+                R.id.action_searchFragment_to_playerFragment,
+                PlayerFragment.createArgs(track.serialize() ?: "")
+            )
+        }
+        trackAdapter = TrackAdapter {
+            viewModel.addToHistory(it)
+            onTrackClickDebounce(it)
+        }.apply {
+            load(emptyList())
+        }
+
         binding.vTrackList.adapter = trackAdapter
 
         viewModel.observeState().observe(viewLifecycleOwner) {
@@ -64,7 +73,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
         binding.vClearHistory.setOnClickListener {
             viewModel.clearHistory()
-            trackAdapter.clear()
+            trackAdapter?.clear()
             it.visibility = View.GONE
             binding.vHistoryTitle.visibility = View.GONE
         }
@@ -82,7 +91,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
         binding.vClearButton.setOnClickListener {
             binding.vSearchLine.setText("")
-            trackAdapter.clear()
+            trackAdapter?.clear()
             inputMethodManager.hideSoftInputFromWindow(binding.vSearchLine.windowToken, 0)
             binding.vSearchPlaceholder.visibility = View.GONE
             viewModel.clearSearch()
@@ -120,24 +129,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         savedLine = savedInstanceState?.getString(SEARCH_TAG) ?: ""
     }
 
-    private fun openPlayer(track: Track) {
-        if (clickDebounce()) {
-            findNavController().navigate(
-                R.id.action_searchFragment_to_playerFragment,
-                PlayerFragment.createArgs(track.serialize() ?: "")
-            )
-        }
-    }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            clickHandler.postDelayed({ isClickAllowed = true }, Const.CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
     fun showLoading() {
         binding.vContentWrapper.vis(false)
         binding.vSearchProgress.vis(true)
@@ -153,7 +144,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             vHistoryTitle.vis(false)
         }
 
-        trackAdapter.load(trackList)
+        trackAdapter?.load(trackList)
     }
 
     fun showError(errorMessage: String) {
@@ -199,6 +190,12 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             is TrackState.History -> showHistory(state.trackHistory)
             is TrackState.LoadingHistory -> showLoading()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+//        trackAdapter = null
+//        binding.vTrackList.adapter = null
     }
 
     companion object {
