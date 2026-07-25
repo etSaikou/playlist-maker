@@ -7,8 +7,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.saikou.playlistmaker.media_libr.domain.FavoriteInteractor
 import com.saikou.playlistmaker.player.data.PlayerState
 import com.saikou.playlistmaker.player.data.PlayerStateEnum
+import com.saikou.playlistmaker.search.data.entity.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -16,16 +18,30 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
 
-class PlayerViewModel(private val previewUrl: String, private val mediaPlayer: MediaPlayer) :
-    ViewModel() {
+class PlayerViewModel(
+    private val track: Track,
+    private val mediaPlayer: MediaPlayer,
+    private val favoriteInteractor: FavoriteInteractor,
+) : ViewModel() {
 
     private val playerStateLiveData =
         MutableLiveData<PlayerState>(PlayerState(PlayerStateEnum.STATE_DEFAULT, "00:00"))
+
+    private val isFavoriteLiveData = MutableLiveData<Boolean>(track.isFavorite)
 
     private var timerJob: Job? = null
 
     init {
         preparePlayer()
+        checkFavoriteStatus()
+    }
+
+    private fun checkFavoriteStatus() {
+        viewModelScope.launch {
+            favoriteInteractor.getFavoriteTrackIds().collect { favoriteIds ->
+                isFavoriteLiveData.postValue(favoriteIds.contains(track.trackId))
+            }
+        }
     }
 
     override fun onCleared() {
@@ -35,6 +51,7 @@ class PlayerViewModel(private val previewUrl: String, private val mediaPlayer: M
 
     fun observePlayerState(): LiveData<PlayerState> = playerStateLiveData
 
+    fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
 
     fun onPlayButtonClicked() {
         when (playerStateLiveData.value?.state) {
@@ -42,6 +59,18 @@ class PlayerViewModel(private val previewUrl: String, private val mediaPlayer: M
             PlayerStateEnum.STATE_PREPARED, PlayerStateEnum.STATE_PAUSED -> startPlayer()
             PlayerStateEnum.STATE_DEFAULT, null -> {}
 
+        }
+    }
+
+    fun onFavoriteButtonClicked() {
+        viewModelScope.launch {
+            if (isFavoriteLiveData.value == true) {
+                favoriteInteractor.deleteTrack(track)
+                isFavoriteLiveData.postValue(false)
+            } else {
+                favoriteInteractor.addTrack(track)
+                isFavoriteLiveData.postValue(true)
+            }
         }
     }
 
@@ -55,7 +84,7 @@ class PlayerViewModel(private val previewUrl: String, private val mediaPlayer: M
     }
 
     private fun preparePlayer() {
-        mediaPlayer.setDataSource(previewUrl)
+        mediaPlayer.setDataSource(track.previewUrl)
 
         mediaPlayer.prepareAsync()
 

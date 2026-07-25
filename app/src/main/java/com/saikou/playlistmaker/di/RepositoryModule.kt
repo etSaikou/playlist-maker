@@ -1,6 +1,8 @@
 package com.saikou.playlistmaker.di
 
 import com.saikou.playlistmaker.db.converter.TrackDbConvertor
+import com.saikou.playlistmaker.media_libr.data.repository.FavoriteRepositoryImpl
+import com.saikou.playlistmaker.media_libr.domain.FavoriteRepository
 import com.saikou.playlistmaker.search.data.repository.HistoryRepositoryImpl
 import com.saikou.playlistmaker.search.data.repository.TrackRepositoryImpl
 import com.saikou.playlistmaker.search.domain.HistoryRepository
@@ -23,5 +25,9 @@ val repositoryModule = module {
 
     single<SettingsRepository> {
         SettingsRepositoryImpl(get())
+    }
+
+    single<FavoriteRepository> {
+        FavoriteRepositoryImpl(get(), get())
     }
 }

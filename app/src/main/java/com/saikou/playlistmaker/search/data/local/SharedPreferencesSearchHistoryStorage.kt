@@ -4,58 +4,47 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.saikou.playlistmaker.global.Const
 import com.saikou.playlistmaker.global.deserializeToList
-import com.saikou.playlistmaker.global.reAdd
-import com.saikou.playlistmaker.global.removeFirst
 import com.saikou.playlistmaker.global.serialize
 import com.saikou.playlistmaker.search.data.entity.TrackHistoryDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class SharedPreferencesSearchHistoryStorage(private val sharedPreferences: SharedPreferences): SearchHistoryStorage {
+class SharedPreferencesSearchHistoryStorage(private val sharedPreferences: SharedPreferences) : SearchHistoryStorage {
 
-    private val trackList = mutableSetOf<TrackHistoryDto>()
-
-    override suspend fun getTracksHistory(): List<TrackHistoryDto> {
-        withContext(Dispatchers.IO) {
-            setList()
-        }
-        return trackList.toList()
+    override suspend fun getTracksHistory(): List<TrackHistoryDto> = withContext(Dispatchers.IO) {
+        getHistoryFromStorage()
     }
 
-    override suspend fun addTrack(track: TrackHistoryDto) {
-        withContext(Dispatchers.IO) {
-            setList()
-            if (trackList.size == 10) {
-                trackList.removeFirst()
-            }
-            if (trackList.contains(track)){
-                trackList.reAdd(track)
-            }
-            trackList.add(track)
+    override suspend fun addTrack(track: TrackHistoryDto) = withContext(Dispatchers.IO) {
+        val trackList = getHistoryFromStorage().toMutableList()
 
-            sharedPreferences.edit {
-                putString(Const.LAST_SEARCH, trackList.serialize())
-            }
+        trackList.removeIf { it.trackId == track.trackId }
+        
+        if (trackList.size >= 10) {
+            trackList.removeAt(0)
+        }
+        
+        trackList.add(track)
+
+        sharedPreferences.edit {
+            putString(Const.LAST_SEARCH, trackList.serialize())
         }
     }
 
-    override suspend fun clearHistory() {
-        withContext(Dispatchers.IO) {
-            sharedPreferences.edit { putString(Const.LAST_SEARCH, "") }
-        }
+    override suspend fun clearHistory() = withContext(Dispatchers.IO) {
+        sharedPreferences.edit { putString(Const.LAST_SEARCH, "") }
     }
 
-    private suspend fun setList() {
-        withContext(Dispatchers.IO) {
-            trackList.clear()
+    private fun getHistoryFromStorage(): List<TrackHistoryDto> {
+        val json = sharedPreferences.getString(Const.LAST_SEARCH, "")
+        return if (json.isNullOrEmpty()) {
+            emptyList()
+        } else {
             try {
-                trackList.addAll(sharedPreferences.getString(Const.LAST_SEARCH, "")?.deserializeToList(
-                    TrackHistoryDto::class.java)
-                    ?: emptyList())
-            } catch (e: Throwable) {
-
+                json.deserializeToList(TrackHistoryDto::class.java)
+            } catch (e: Exception) {
+                emptyList()
             }
         }
     }
-
 }

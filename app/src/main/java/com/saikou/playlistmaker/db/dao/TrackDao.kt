@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.saikou.playlistmaker.db.entity.TrackEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TrackDao {
@@ -16,9 +17,9 @@ interface TrackDao {
     @Delete
     suspend fun deleteTrack(track: TrackEntity)
 
-    @Query("SELECT * FROM track_table")
-    suspend fun getTracks(): List<TrackEntity>
+    @Query("SELECT * FROM track_table ORDER BY addedAt DESC")
+    fun getTracks(): Flow<List<TrackEntity>>
 
     @Query("SELECT trackId FROM track_table")
-    suspend fun getTrackIds(): List<Long>
+    fun getTrackIds(): Flow<List<Long>>
 }

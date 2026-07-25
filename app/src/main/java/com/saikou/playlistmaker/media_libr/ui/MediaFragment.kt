@@ -36,7 +36,7 @@ class MediaFragment: BindingFragment<FragmentMedialibBinding>() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         tabMediator.detach()
+        super.onDestroyView()
     }
 }

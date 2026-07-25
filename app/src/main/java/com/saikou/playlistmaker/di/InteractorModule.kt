@@ -1,5 +1,7 @@
 package com.saikou.playlistmaker.di
 
+import com.saikou.playlistmaker.media_libr.domain.FavoriteInteractor
+import com.saikou.playlistmaker.media_libr.domain.impl.FavoriteInteractorImpl
 import com.saikou.playlistmaker.search.domain.TrackHistoryInteractor
 import com.saikou.playlistmaker.search.domain.TrackInteractor
 import com.saikou.playlistmaker.search.domain.impl.TrackHistoryInteractorImpl
@@ -13,11 +15,11 @@ import org.koin.dsl.module
 val interactorModule = module {
 
     single<TrackInteractor> {
-        TrackInteractorImpl(get())
+        TrackInteractorImpl(get(), get())
     }
 
     single<TrackHistoryInteractor> {
-        TrackHistoryInteractorImpl(get())
+        TrackHistoryInteractorImpl(get(), get())
     }
 
     single<SettingsInteractor> {
@@ -26,6 +28,10 @@ val interactorModule = module {
 
     single<SharingInteractor> {
         SharingInteractorImpl(get())
+    }
+
+    single<FavoriteInteractor> {
+        FavoriteInteractorImpl(get())
     }
 
 }
