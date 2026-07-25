@@ -1,5 +1,6 @@
 package com.saikou.playlistmaker.di
 
+import com.saikou.playlistmaker.db.converter.TrackDbConvertor
 import com.saikou.playlistmaker.search.data.repository.HistoryRepositoryImpl
 import com.saikou.playlistmaker.search.data.repository.TrackRepositoryImpl
 import com.saikou.playlistmaker.search.domain.HistoryRepository
@@ -9,6 +10,8 @@ import com.saikou.playlistmaker.settings.domain.SettingsRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
+
+    factory { TrackDbConvertor() }
 
     single<TrackRepository> {
         TrackRepositoryImpl(get())
