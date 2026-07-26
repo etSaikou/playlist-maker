@@ -1,5 +1,6 @@
 package com.saikou.playlistmaker.di
 
+import com.saikou.playlistmaker.media_libr.ui.view_model.CreatePlaylistViewModel
 import com.saikou.playlistmaker.media_libr.ui.view_model.FavoriteViewModel
 import com.saikou.playlistmaker.media_libr.ui.view_model.PlaylistViewModel
 import com.saikou.playlistmaker.player.ui.view_model.PlayerViewModel
@@ -16,7 +17,7 @@ val viewModelModule = module {
     }
 
     viewModel { (track: Track) ->
-        PlayerViewModel(track, get(), get())
+        PlayerViewModel(track, get(), get(), get())
     }
 
     viewModel{
@@ -24,10 +25,14 @@ val viewModelModule = module {
     }
 
     viewModel{
-        PlaylistViewModel()
+        PlaylistViewModel(get())
     }
     viewModel{
         FavoriteViewModel(get(), get())
+    }
+
+    viewModel {
+        CreatePlaylistViewModel(get(), get())
     }
 
 }

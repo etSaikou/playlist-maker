@@ -2,9 +2,15 @@ package com.saikou.playlistmaker.global
 
 import android.content.Context
 import android.util.TypedValue
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.saikou.playlistmaker.R
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -58,4 +64,17 @@ fun <T> MutableCollection<T>.reAdd(t: T) {
 }
 fun View.vis(visibility: Boolean) {
     this.visibility = if(visibility == true) View.VISIBLE else View.GONE
+}
+
+fun Fragment.showCustomToast(message: String) {
+    val layout = LayoutInflater.from(requireContext()).inflate(R.layout.layout_toast, null)
+    val text: TextView = layout.findViewById(R.id.vToastText)
+    text.text = message
+
+    Toast(requireContext()).apply {
+        duration = Toast.LENGTH_SHORT
+        setGravity(Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, resources.getDimensionPixelSize(R.dimen.margin16))
+        view = layout
+        show()
+    }
 }

@@ -2,21 +2,19 @@ package com.saikou.playlistmaker.search.ui.fragment
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.saikou.playlistmaker.R
 import com.saikou.playlistmaker.databinding.FragmentSearchBinding
 import com.saikou.playlistmaker.global.Const
 import com.saikou.playlistmaker.global.serialize
+import com.saikou.playlistmaker.global.showCustomToast
 import com.saikou.playlistmaker.global.vis
 import com.saikou.playlistmaker.player.ui.fragment.PlayerFragment
 import com.saikou.playlistmaker.search.data.entity.Track
@@ -55,6 +53,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         }
         trackAdapter = TrackAdapter {
             viewModel.addToHistory(it)
+            render(TrackState.Loading)
             onTrackClickDebounce(it)
         }.apply {
             load(emptyList())
@@ -178,7 +177,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     }
 
     fun showToast(message: String?) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        message?.let { showCustomToast(it) }
     }
 
     fun render(state: TrackState) {

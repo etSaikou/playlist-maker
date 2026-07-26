@@ -8,11 +8,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saikou.playlistmaker.media_libr.domain.FavoriteInteractor
+import com.saikou.playlistmaker.media_libr.domain.api.PlaylistInteractor
+import com.saikou.playlistmaker.media_libr.domain.models.Playlist
 import com.saikou.playlistmaker.player.data.PlayerState
 import com.saikou.playlistmaker.player.data.PlayerStateEnum
 import com.saikou.playlistmaker.search.data.entity.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -22,6 +25,7 @@ class PlayerViewModel(
     private val track: Track,
     private val mediaPlayer: MediaPlayer,
     private val favoriteInteractor: FavoriteInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private val playerStateLiveData =
@@ -29,12 +33,40 @@ class PlayerViewModel(
 
     private val isFavoriteLiveData = MutableLiveData<Boolean>(track.isFavorite)
 
+    private val playlistsLiveData = MutableLiveData<List<Playlist>>()
+
+    private val addTrackStatusLiveData = MutableLiveData<Pair<String, Boolean>>()
+
     private var timerJob: Job? = null
 
     init {
         preparePlayer()
         checkFavoriteStatus()
+        loadPlaylists()
     }
+
+    private fun loadPlaylists() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylists().collect {
+                playlistsLiveData.postValue(it)
+            }
+        }
+    }
+
+    fun addTrackToPlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor.addTrackToPlaylist(playlist, track).collect { added ->
+                addTrackStatusLiveData.postValue(Pair(playlist.name, added))
+                if (added) {
+                    loadPlaylists() // Refresh playlists to update track count
+                }
+            }
+        }
+    }
+
+    fun observePlaylists(): LiveData<List<Playlist>> = playlistsLiveData
+
+    fun observeAddTrackStatus(): LiveData<Pair<String, Boolean>> = addTrackStatusLiveData
 
     private fun checkFavoriteStatus() {
         viewModelScope.launch {

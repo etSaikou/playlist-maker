@@ -1,27 +1,33 @@
 package com.saikou.playlistmaker.player.ui.fragment
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.saikou.playlistmaker.R
 import com.saikou.playlistmaker.databinding.FragmentPlayerBinding
 import com.saikou.playlistmaker.global.deserialize
 import com.saikou.playlistmaker.global.dpToPx
 import com.saikou.playlistmaker.global.millisFormat
 import com.saikou.playlistmaker.global.replaceDimensionArtwork
+import com.saikou.playlistmaker.global.showCustomToast
 import com.saikou.playlistmaker.global.vis
 import com.saikou.playlistmaker.player.data.PlayerStateEnum
+import com.saikou.playlistmaker.player.ui.track_adapter.PlaylistHorizontalAdapter
 import com.saikou.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.saikou.playlistmaker.search.data.entity.Track
 import com.saikou.playlistmaker.util.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import kotlin.getValue
-import kotlin.text.ifEmpty
 
 class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
 
@@ -34,6 +40,13 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
         parametersOf(trackFromIntent)
     }
 
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private var adapter: PlaylistHorizontalAdapter? = null
+    private var activityToolbar: Toolbar? = null
+    private val dimDrawable = ColorDrawable(Color.BLACK).apply {
+        alpha = 0
+    }
+
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -44,8 +57,42 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        trackFromIntent?.let {
+        setupBottomSheet()
 
+        activityToolbar = requireActivity().findViewById(R.id.toolbar)
+        activityToolbar?.overlay?.add(dimDrawable)
+
+        adapter = PlaylistHorizontalAdapter { playlist ->
+            viewModel.addTrackToPlaylist(playlist)
+        }
+        binding.includedPlaylistsBottomSheet.vPlaylistsRecyclerView.adapter = adapter
+
+        binding.vCollectionButton.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        }
+
+        binding.includedPlaylistsBottomSheet.vNewPlaylistButton.setOnClickListener {
+            findNavController().navigate(R.id.action_playerFragment_to_createPlaylistFragment)
+        }
+
+        viewModel.observePlaylists().observe(viewLifecycleOwner) { playlists ->
+            adapter?.load(playlists)
+        }
+
+        activityToolbar?.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        viewModel.observeAddTrackStatus().observe(viewLifecycleOwner) { (playlistName, added) ->
+            if (added) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                showCustomToast(getString(R.string.added_to_playlist, playlistName))
+            } else {
+                showCustomToast(getString(R.string.already_in_playlist, playlistName))
+            }
+        }
+
+        trackFromIntent?.let {
             Glide.with(this)
                 .load(it.artworkUrl100.replaceDimensionArtwork())
                 .placeholder(R.drawable.ic_placeholder_45)
@@ -76,7 +123,6 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
                     viewModel.onFavoriteButtonClicked()
                 }
             }
-
         }
 
         viewModel.observePlayerState().observe(viewLifecycleOwner) {
@@ -88,6 +134,29 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
         viewModel.observeIsFavorite().observe(viewLifecycleOwner) { isFavorite ->
             changeFavoriteButton(isFavorite)
         }
+    }
+
+    private fun setupBottomSheet() {
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.includedPlaylistsBottomSheet.root).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                val isVisible = newState != BottomSheetBehavior.STATE_HIDDEN
+                binding.vOverlay.vis(isVisible)
+                if (!isVisible) dimDrawable.alpha = 0
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                binding.vOverlay.alpha = slideOffset
+                activityToolbar?.let {
+                    dimDrawable.setBounds(0, 0, it.width, it.height)
+                    dimDrawable.alpha = (slideOffset * 153).toInt()
+                }
+            }
+        })
     }
 
     private fun changeButton(isPlaying: Boolean) {
@@ -108,6 +177,11 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        activityToolbar?.overlay?.remove(dimDrawable)
     }
 
     companion object {

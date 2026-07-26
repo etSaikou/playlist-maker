@@ -1,7 +1,9 @@
 package com.saikou.playlistmaker.di
 
 import com.saikou.playlistmaker.media_libr.domain.FavoriteInteractor
+import com.saikou.playlistmaker.media_libr.domain.api.PlaylistInteractor
 import com.saikou.playlistmaker.media_libr.domain.impl.FavoriteInteractorImpl
+import com.saikou.playlistmaker.media_libr.domain.impl.PlaylistInteractorImpl
 import com.saikou.playlistmaker.search.domain.TrackHistoryInteractor
 import com.saikou.playlistmaker.search.domain.TrackInteractor
 import com.saikou.playlistmaker.search.domain.impl.TrackHistoryInteractorImpl
@@ -32,6 +34,10 @@ val interactorModule = module {
 
     single<FavoriteInteractor> {
         FavoriteInteractorImpl(get())
+    }
+
+    single<PlaylistInteractor> {
+        PlaylistInteractorImpl(get())
     }
 
 }
