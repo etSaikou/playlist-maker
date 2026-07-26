@@ -16,7 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.saikou.playlistmaker.R
 import com.saikou.playlistmaker.databinding.FragmentCreatePlaylistBinding
-import com.saikou.playlistmaker.global.showCustomToast
+import com.saikou.playlistmaker.global.showToast
 import com.saikou.playlistmaker.media_libr.ui.view_model.CreatePlaylistViewModel
 import com.saikou.playlistmaker.util.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -71,7 +71,7 @@ class CreatePlaylistFragment : BindingFragment<FragmentCreatePlaylistBinding>() 
             val name = binding.vPlaylistName.text.toString()
             val description = binding.vPlaylistDescription.text.toString()
             viewModel.createPlaylist(name, description, imageUri)
-            showCustomToast(getString(R.string.playlist_created_msg, name))
+            showToast(requireContext(),getString(R.string.playlist_created_msg, name))
 
             findNavController().popBackStack()
         }

@@ -19,7 +19,7 @@ import com.saikou.playlistmaker.global.deserialize
 import com.saikou.playlistmaker.global.dpToPx
 import com.saikou.playlistmaker.global.millisFormat
 import com.saikou.playlistmaker.global.replaceDimensionArtwork
-import com.saikou.playlistmaker.global.showCustomToast
+import com.saikou.playlistmaker.global.showToast
 import com.saikou.playlistmaker.global.vis
 import com.saikou.playlistmaker.player.data.PlayerStateEnum
 import com.saikou.playlistmaker.player.ui.track_adapter.PlaylistHorizontalAdapter
@@ -86,9 +86,9 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
         viewModel.observeAddTrackStatus().observe(viewLifecycleOwner) { (playlistName, added) ->
             if (added) {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                showCustomToast(getString(R.string.added_to_playlist, playlistName))
+                showToast(requireContext(),getString(R.string.added_to_playlist, playlistName))
             } else {
-                showCustomToast(getString(R.string.already_in_playlist, playlistName))
+                showToast(requireContext(),getString(R.string.already_in_playlist, playlistName))
             }
         }
 

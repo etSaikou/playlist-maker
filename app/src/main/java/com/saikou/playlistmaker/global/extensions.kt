@@ -28,7 +28,7 @@ fun Any?.serialize(): String? {
     return GsonBuilder().create().toJson(this)
 }
 
-inline fun<reified T> String.deserialize(clazz: Class<T>): T? {
+inline fun <reified T> String.deserialize(clazz: Class<T>): T? {
     return try {
         GsonBuilder().create().fromJson(this, clazz)
     } catch (e: Exception) {
@@ -36,18 +36,19 @@ inline fun<reified T> String.deserialize(clazz: Class<T>): T? {
         null
     }
 }
-inline fun<reified T> String.deserializeToList(clazz: Class<T>): List<T> {
+
+inline fun <reified T> String.deserializeToList(clazz: Class<T>): List<T> {
     val gson = GsonBuilder().create()
 
-    return gson.fromJson<List<T>>(this, object: TypeToken<List<T>>(){}.type)
+    return gson.fromJson<List<T>>(this, object : TypeToken<List<T>>() {}.type)
 }
 
-fun String.replaceDimensionArtwork(): String{
+fun String.replaceDimensionArtwork(): String {
     return this.replaceAfterLast('/', "512x512bb.jpg")
 }
 
 fun Long.millisFormat(): String? {
-   return SimpleDateFormat("mm:ss", Locale.getDefault()).format(this)
+    return SimpleDateFormat("mm:ss", Locale.getDefault()).format(this)
 }
 
 fun <T> MutableCollection<T>.removeFirst() {
@@ -62,8 +63,9 @@ fun <T> MutableCollection<T>.reAdd(t: T) {
     remove(t)
     add(t)
 }
+
 fun View.vis(visibility: Boolean) {
-    this.visibility = if(visibility == true) View.VISIBLE else View.GONE
+    this.visibility = if (visibility == true) View.VISIBLE else View.GONE
 }
 
 fun Fragment.showCustomToast(message: String) {
@@ -73,8 +75,15 @@ fun Fragment.showCustomToast(message: String) {
 
     Toast(requireContext()).apply {
         duration = Toast.LENGTH_SHORT
-        setGravity(Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, resources.getDimensionPixelSize(R.dimen.margin16))
+        setGravity(
+            Gravity.BOTTOM or Gravity.FILL_HORIZONTAL,
+            0,
+            resources.getDimensionPixelSize(R.dimen.margin16)
+        )
         view = layout
         show()
     }
+}
+fun showToast(context: Context, message: String?) {
+    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
 }

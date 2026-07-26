@@ -14,7 +14,7 @@ import com.saikou.playlistmaker.R
 import com.saikou.playlistmaker.databinding.FragmentSearchBinding
 import com.saikou.playlistmaker.global.Const
 import com.saikou.playlistmaker.global.serialize
-import com.saikou.playlistmaker.global.showCustomToast
+import com.saikou.playlistmaker.global.showToast
 import com.saikou.playlistmaker.global.vis
 import com.saikou.playlistmaker.player.ui.fragment.PlayerFragment
 import com.saikou.playlistmaker.search.data.entity.Track
@@ -65,7 +65,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             render(it)
         }
         viewModel.observeShowToast().observe(viewLifecycleOwner) {
-            showToast(it)
+            showToast(requireContext(), it)
         }
 
         binding.vSearchPlaceholder.visibility = View.GONE
@@ -174,10 +174,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         showContent(tracks.reversed())
         binding.vClearHistory.vis(!tracks.isEmpty())
         binding.vHistoryTitle.vis(!tracks.isEmpty())
-    }
-
-    fun showToast(message: String?) {
-        message?.let { showCustomToast(it) }
     }
 
     fun render(state: TrackState) {
