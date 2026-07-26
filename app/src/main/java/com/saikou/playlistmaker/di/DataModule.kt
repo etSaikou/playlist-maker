@@ -12,6 +12,7 @@ import com.saikou.playlistmaker.search.data.network.NetworkClient
 import com.saikou.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.saikou.playlistmaker.sharing.data.impl.ExternalNavigatorImpl
 import com.saikou.playlistmaker.sharing.domain.ExternalNavigator
+import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -29,6 +30,8 @@ val dataModule = module {
     factory {
         MediaPlayer()
     }
+
+    single { Gson() }
 
     single {
         androidContext()
@@ -54,5 +57,7 @@ val dataModule = module {
     }
 
     factory { get<AppDatabase>().trackDao() }
+    factory { get<AppDatabase>().playlistDao() }
+    factory { get<AppDatabase>().playlistTrackDao() }
 
 }
