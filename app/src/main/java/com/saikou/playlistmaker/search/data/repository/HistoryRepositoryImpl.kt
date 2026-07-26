@@ -51,7 +51,7 @@ class HistoryRepositoryImpl(private val searHistoryStorage: SearchHistoryStorage
         }
     }
 
-    override suspend fun clearHistory() {
+    override fun clearHistory() {
         searHistoryStorage.clearHistory()
     }
 

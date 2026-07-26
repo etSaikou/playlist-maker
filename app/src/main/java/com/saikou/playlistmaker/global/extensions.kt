@@ -44,11 +44,18 @@ fun Long.millisFormat(): String? {
    return SimpleDateFormat("mm:ss", Locale.getDefault()).format(this)
 }
 
-fun <T> MutableCollection<T>.removeFirst()
-        = with(iterator()){ next().also{ remove() }}
-fun <T> MutableCollection<T>.reAdd(t:T)
-        = with(iterator()){
-            next().also{ remove(t) }.also { add(t)}}
+fun <T> MutableCollection<T>.removeFirst() {
+    val it = iterator()
+    if (it.hasNext()) {
+        it.next()
+        it.remove()
+    }
+}
+
+fun <T> MutableCollection<T>.reAdd(t: T) {
+    remove(t)
+    add(t)
+}
 fun View.vis(visibility: Boolean) {
     this.visibility = if(visibility == true) View.VISIBLE else View.GONE
 }

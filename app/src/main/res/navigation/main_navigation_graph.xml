@@ -9,7 +9,14 @@
         android:id="@+id/mediaFragment"
         android:name="com.saikou.playlistmaker.media_libr.ui.MediaFragment"
         android:label="@string/medialib_toolbar_title"
-        tools:layout="@layout/fragment_medialib" />
+        tools:layout="@layout/fragment_medialib" >
+        <action
+            android:id="@+id/action_mediaFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+        <argument
+            android:name="Track"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.saikou.playlistmaker.settings.ui.fragment.SettingsFragment"

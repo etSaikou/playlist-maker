@@ -193,9 +193,10 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     }
 
     override fun onDestroyView() {
+        textWatcher?.let { binding.vSearchLine.removeTextChangedListener(it) }
+        binding.vTrackList.adapter = null
+        trackAdapter = null
         super.onDestroyView()
-//        trackAdapter = null
-//        binding.vTrackList.adapter = null
     }
 
     companion object {

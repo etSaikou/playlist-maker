@@ -133,9 +133,8 @@ class SearchViewModel(
     }
 
     fun clearHistory() {
-        viewModelScope.launch {
-            trackHistoryInteractor.clearHistory()
-        }
+
+        trackHistoryInteractor.clearHistory()
         searchHistory.postValue(emptyList())
         renderState(TrackState.Content(emptyList()))
     }

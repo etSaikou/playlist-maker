@@ -2,6 +2,8 @@ package com.saikou.playlistmaker.di
 
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.room.Room
+import com.saikou.playlistmaker.db.AppDatabase
 import com.saikou.playlistmaker.global.Const
 import com.saikou.playlistmaker.search.data.local.SearchHistoryStorage
 import com.saikou.playlistmaker.search.data.local.SharedPreferencesSearchHistoryStorage
@@ -44,5 +46,13 @@ val dataModule = module {
     single<ExternalNavigator> {
         ExternalNavigatorImpl(androidContext())
     }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    factory { get<AppDatabase>().trackDao() }
 
 }

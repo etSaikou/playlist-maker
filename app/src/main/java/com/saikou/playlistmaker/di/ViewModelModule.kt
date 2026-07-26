@@ -3,6 +3,7 @@ package com.saikou.playlistmaker.di
 import com.saikou.playlistmaker.media_libr.ui.view_model.FavoriteViewModel
 import com.saikou.playlistmaker.media_libr.ui.view_model.PlaylistViewModel
 import com.saikou.playlistmaker.player.ui.view_model.PlayerViewModel
+import com.saikou.playlistmaker.search.data.entity.Track
 import com.saikou.playlistmaker.search.ui.view_model.SearchViewModel
 import com.saikou.playlistmaker.settings.ui.view_model.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -14,8 +15,8 @@ val viewModelModule = module {
         SearchViewModel(get(), get())
     }
 
-    viewModel{(previewUrl: String) ->
-        PlayerViewModel(previewUrl, get())
+    viewModel { (track: Track) ->
+        PlayerViewModel(track, get(), get())
     }
 
     viewModel{
@@ -26,7 +27,7 @@ val viewModelModule = module {
         PlaylistViewModel()
     }
     viewModel{
-        FavoriteViewModel()
+        FavoriteViewModel(get(), get())
     }
 
 }
