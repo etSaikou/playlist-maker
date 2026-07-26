@@ -7,6 +7,6 @@ interface TrackHistoryInteractor {
 
     fun getHistory(): Flow<List<Track>>
     suspend fun addTrack(track: Track)
-    suspend fun clearHistory()
+    fun clearHistory()
 
 }

@@ -24,7 +24,7 @@ class TrackHistoryInteractorImpl(
         repository.addTrack(track)
     }
 
-    override suspend fun clearHistory() {
+    override fun clearHistory() {
         repository.clearHistory()
     }
 }

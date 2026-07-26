@@ -9,7 +9,8 @@ import com.saikou.playlistmaker.search.data.entity.TrackHistoryDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class SharedPreferencesSearchHistoryStorage(private val sharedPreferences: SharedPreferences) : SearchHistoryStorage {
+class SharedPreferencesSearchHistoryStorage(private val sharedPreferences: SharedPreferences) :
+    SearchHistoryStorage {
 
     override suspend fun getTracksHistory(): List<TrackHistoryDto> = withContext(Dispatchers.IO) {
         getHistoryFromStorage()
@@ -19,11 +20,11 @@ class SharedPreferencesSearchHistoryStorage(private val sharedPreferences: Share
         val trackList = getHistoryFromStorage().toMutableList()
 
         trackList.removeIf { it.trackId == track.trackId }
-        
+
         if (trackList.size >= 10) {
             trackList.removeAt(0)
         }
-        
+
         trackList.add(track)
 
         sharedPreferences.edit {
@@ -31,9 +32,8 @@ class SharedPreferencesSearchHistoryStorage(private val sharedPreferences: Share
         }
     }
 
-    override suspend fun clearHistory() = withContext(Dispatchers.IO) {
-        sharedPreferences.edit { putString(Const.LAST_SEARCH, "") }
-    }
+    override fun clearHistory() = sharedPreferences.edit { putString(Const.LAST_SEARCH, "") }
+
 
     private fun getHistoryFromStorage(): List<TrackHistoryDto> {
         val json = sharedPreferences.getString(Const.LAST_SEARCH, "")
