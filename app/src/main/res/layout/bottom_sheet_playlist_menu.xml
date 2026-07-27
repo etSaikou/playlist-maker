@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/vPlaylistMenuBottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bottom_sheet_background"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bottom_sheet_handle" />
+
+    <include
+        android:id="@+id/includedPlaylistInfo"
+        layout="@layout/playlist_view_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" />
+
+    <TextView
+        android:id="@+id/vShareMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingVertical="16dp"
+        android:fontFamily="@font/ys_display_regular"
+        android:text="@string/playlist_share"
+        android:textColor="@color/settings_text_button"
+        android:textSize="19sp" />
+
+    <TextView
+        android:id="@+id/vEditMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="16dp"
+        android:fontFamily="@font/ys_display_regular"
+        android:text="@string/playlist_edit_info"
+        android:textColor="@color/settings_text_button"
+        android:textSize="19sp" />
+
+    <TextView
+        android:id="@+id/vDeleteMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="16dp"
+        android:fontFamily="@font/ys_display_regular"
+        android:text="@string/playlist_delete"
+        android:textColor="@color/settings_text_button"
+        android:textSize="19sp" />
+
+</LinearLayout>

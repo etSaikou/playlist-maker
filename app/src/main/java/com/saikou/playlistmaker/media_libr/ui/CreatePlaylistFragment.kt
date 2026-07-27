@@ -21,10 +21,10 @@ import com.saikou.playlistmaker.media_libr.ui.view_model.CreatePlaylistViewModel
 import com.saikou.playlistmaker.util.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class CreatePlaylistFragment : BindingFragment<FragmentCreatePlaylistBinding>() {
+open class CreatePlaylistFragment : BindingFragment<FragmentCreatePlaylistBinding>() {
 
-    private val viewModel by viewModel<CreatePlaylistViewModel>()
-    private var imageUri: Uri? = null
+    protected open val viewModel by viewModel<CreatePlaylistViewModel>()
+    protected var imageUri: Uri? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -68,12 +68,7 @@ class CreatePlaylistFragment : BindingFragment<FragmentCreatePlaylistBinding>() 
         })
 
         binding.vCreateButton.setOnClickListener {
-            val name = binding.vPlaylistName.text.toString()
-            val description = binding.vPlaylistDescription.text.toString()
-            viewModel.createPlaylist(name, description, imageUri)
-            showToast(requireContext(),getString(R.string.playlist_created_msg, name))
-
-            findNavController().popBackStack()
+            savePlaylist()
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
@@ -110,5 +105,13 @@ class CreatePlaylistFragment : BindingFragment<FragmentCreatePlaylistBinding>() 
                 findNavController().popBackStack()
             }
             .show()
+    }
+
+    protected open fun savePlaylist() {
+        val name = binding.vPlaylistName.text.toString()
+        val description = binding.vPlaylistDescription.text.toString()
+        viewModel.createPlaylist(name, description, imageUri)
+        showToast(requireContext(), getString(R.string.playlist_created_msg, name))
+        findNavController().popBackStack()
     }
 }

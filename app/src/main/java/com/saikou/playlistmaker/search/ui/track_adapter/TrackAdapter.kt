@@ -3,9 +3,11 @@ package com.saikou.playlistmaker.search.ui.track_adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.saikou.playlistmaker.search.data.entity.Track
+import java.util.ArrayList
 
 class TrackAdapter(
-                   private val onItemClicked: (track: Track) -> Unit
+    private val onItemClicked: (track: Track) -> Unit,
+    private val onItemLongClicked: ((track: Track) -> Unit)? = null
 ) :
     RecyclerView.Adapter<TrackViewHolder>() {
 
@@ -26,6 +28,11 @@ class TrackAdapter(
 
         holder.itemView.setOnClickListener {
             onItemClicked(list[position])
+        }
+
+        holder.itemView.setOnLongClickListener {
+            onItemLongClicked?.invoke(list[position])
+            true
         }
     }
 

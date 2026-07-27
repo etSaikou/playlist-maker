@@ -47,4 +47,21 @@ class CreatePlaylistViewModel(
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
         return file.absolutePath
     }
+
+    fun updatePlaylist(playlist: Playlist, name: String, description: String, imageUri: Uri?) {
+        viewModelScope.launch {
+            val imagePath = if (imageUri != null && imageUri.toString() != playlist.imagePath) {
+                saveImageToPrivateStorage(imageUri, name)
+            } else {
+                playlist.imagePath
+            }
+            playlistInteractor.updatePlaylist(
+                playlist.copy(
+                    name = name,
+                    description = description,
+                    imagePath = imagePath
+                )
+            )
+        }
+    }
 }

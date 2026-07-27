@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.saikou.playlistmaker.R
 import com.saikou.playlistmaker.databinding.FragmentPlaylistBinding
@@ -31,7 +32,10 @@ class PlaylistFragment : BindingFragment<FragmentPlaylistBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         adapter = PlaylistAdapter { playlist ->
-            // TODO: click
+            findNavController().navigate(
+                R.id.action_mediaFragment_to_playlistDetailsFragment,
+                bundleOf(PlaylistDetailsFragment.ARGS_PLAYLIST_ID to playlist.id)
+            )
         }
         binding.vPlaylistList.adapter = adapter
 
