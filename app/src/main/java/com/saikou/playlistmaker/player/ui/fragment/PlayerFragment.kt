@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -63,8 +64,10 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { _ ->
-        // Handle the result if needed
+    ) { isGranted ->
+        if (!isGranted) {
+            showNotificationPermissionDialog()
+        }
     }
 
     private val serviceConnection = object : ServiceConnection {
@@ -182,12 +185,24 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
 
     private fun checkAndRequestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
+            when {
+                ContextCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    // Already granted
+                }
+
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    requireActivity(),
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) -> {
+                    showNotificationPermissionDialog()
+                }
+
+                else -> {
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
             }
         } else {
             if (!NotificationManagerCompat.from(requireContext()).areNotificationsEnabled()) {

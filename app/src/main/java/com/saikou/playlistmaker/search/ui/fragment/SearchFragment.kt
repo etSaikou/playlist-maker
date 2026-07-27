@@ -30,7 +30,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private val viewModel by viewModel<SearchViewModel>()
     private var textWatcher: TextWatcher? = null
 
-    private lateinit var savedLine: String
+    private var savedLine: String = ""
 
     private var trackAdapter: TrackAdapter? = null
     private lateinit var onTrackClickDebounce: (Track) -> Unit
@@ -77,8 +77,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             binding.vHistoryTitle.visibility = View.GONE
         }
 
-        savedLine = savedInstanceState?.getString(SEARCH_TAG) ?: ""
-
         val inputMethodManager =
             context?.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
@@ -104,14 +102,12 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                if (!s.isNullOrEmpty()) {
-                    savedLine = s.toString()
-                } else {
+                savedLine = s?.toString() ?: ""
+                if (savedLine.isEmpty()) {
                     viewModel.clearSearch()
                 }
-                viewModel.searchDebounce(changedText = s?.toString() ?: "", false)
-                binding.vClearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
+                viewModel.searchDebounce(changedText = savedLine, false)
+                binding.vClearButton.visibility = if (savedLine.isEmpty()) View.GONE else View.VISIBLE
             }
         }
         textWatcher?.let { binding.vSearchLine.addTextChangedListener(it) }
@@ -120,7 +116,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_TAG, binding.vSearchLine.text.toString())
+        outState.putString(SEARCH_TAG, savedLine)
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
