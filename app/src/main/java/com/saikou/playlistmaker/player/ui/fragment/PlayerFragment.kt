@@ -160,9 +160,7 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
     }
 
     private fun changeButton(isPlaying: Boolean) {
-        Glide.with(this)
-            .load(if (isPlaying) R.drawable.ic_play_button_light_pause_83 else R.drawable.ic_play_button_light_83)
-            .into(binding.vPlayButton)
+        binding.vPlayButton.setState(isPlaying)
     }
 
     private fun changeFavoriteButton(isFavorite: Boolean) {
