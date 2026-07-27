@@ -56,17 +56,16 @@
                 app:layout_constraintStart_toStartOf="@+id/vTrackNamePlayer"
                 app:layout_constraintTop_toBottomOf="@id/vTrackNamePlayer" />
 
-            <ImageButton
+            <com.saikou.playlistmaker.player.ui.custom_view.PlaybackButtonView
                 android:id="@+id/vPlayButton"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="30dp"
-                android:backgroundTint="@color/wb_bg"
-                android:src="@drawable/ic_play_button_light_83"
+                app:playIconRes="@drawable/ic_play_button_100"
+                app:pauseIconRes="@drawable/ic_pause_button_100"
                 app:layout_constraintEnd_toEndOf="@+id/vArtistName"
                 app:layout_constraintStart_toStartOf="@+id/vArtistName"
-                app:layout_constraintTop_toBottomOf="@+id/vArtistName"
-                app:tint="@color/settings_text_button" />
+                app:layout_constraintTop_toBottomOf="@+id/vArtistName" />
 
             <ImageButton
                 android:id="@+id/vCollectionButton"
