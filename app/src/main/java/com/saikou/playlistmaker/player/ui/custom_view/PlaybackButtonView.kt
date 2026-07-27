@@ -1,14 +1,12 @@
 package com.saikou.playlistmaker.player.ui.custom_view
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.RectF
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.graphics.drawable.toBitmap
 import com.saikou.playlistmaker.R
 
 class PlaybackButtonView @JvmOverloads constructor(
@@ -17,11 +15,9 @@ class PlaybackButtonView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private var playBitmap: Bitmap? = null
-    private var pauseBitmap: Bitmap? = null
+    private var playDrawable: Drawable? = null
+    private var pauseDrawable: Drawable? = null
     private var isPlaying = false
-
-    private val imageRect = RectF()
 
     init {
         context.theme.obtainStyledAttributes(attrs, R.styleable.PlaybackButtonView, 0, 0).apply {
@@ -32,14 +28,12 @@ class PlaybackButtonView @JvmOverloads constructor(
                 val playbackButtonColor = context.getColor(R.color.settings_text_button)
 
                 if (playResId != 0) {
-                    val drawable = AppCompatResources.getDrawable(context, playResId)
-                    drawable?.setTint(playbackButtonColor)
-                    playBitmap = drawable?.toBitmap()
+                    playDrawable = AppCompatResources.getDrawable(context, playResId)
+                    playDrawable?.setTint(playbackButtonColor)
                 }
                 if (pauseResId != 0) {
-                    val drawable = AppCompatResources.getDrawable(context, pauseResId)
-                    drawable?.setTint(playbackButtonColor)
-                    pauseBitmap = drawable?.toBitmap()
+                    pauseDrawable = AppCompatResources.getDrawable(context, pauseResId)
+                    pauseDrawable?.setTint(playbackButtonColor)
                 }
             } finally {
                 recycle()
@@ -49,19 +43,19 @@ class PlaybackButtonView @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        val left = paddingLeft.toFloat()
-        val top = paddingTop.toFloat()
-        val right = w - paddingRight.toFloat()
-        val bottom = h - paddingBottom.toFloat()
-        imageRect.set(left, top, right, bottom)
+        val left = paddingLeft
+        val top = paddingTop
+        val right = w - paddingRight
+        val bottom = h - paddingBottom
+        
+        playDrawable?.setBounds(left, top, right, bottom)
+        pauseDrawable?.setBounds(left, top, right, bottom)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val bitmap = if (isPlaying) pauseBitmap else playBitmap
-        bitmap?.let {
-            canvas.drawBitmap(it, null, imageRect, null)
-        }
+        val drawable = if (isPlaying) pauseDrawable else playDrawable
+        drawable?.draw(canvas)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
