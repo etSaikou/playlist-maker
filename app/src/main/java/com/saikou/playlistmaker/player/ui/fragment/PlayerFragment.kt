@@ -1,13 +1,23 @@
 package com.saikou.playlistmaker.player.ui.fragment
 
+import android.Manifest
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -22,6 +32,7 @@ import com.saikou.playlistmaker.global.replaceDimensionArtwork
 import com.saikou.playlistmaker.global.showToast
 import com.saikou.playlistmaker.global.vis
 import com.saikou.playlistmaker.player.data.PlayerStateEnum
+import com.saikou.playlistmaker.player.ui.service.AudioPlayerService
 import com.saikou.playlistmaker.player.ui.track_adapter.PlaylistHorizontalAdapter
 import com.saikou.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.saikou.playlistmaker.search.data.entity.Track
@@ -45,6 +56,23 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
     private var activityToolbar: Toolbar? = null
     private val dimDrawable = ColorDrawable(Color.BLACK).apply {
         alpha = 0
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { _ ->
+        // Handle the result if needed
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as AudioPlayerService.AudioPlayerBinder
+            viewModel.onServiceConnected(binder.getService())
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            viewModel.onServiceDisconnected()
+        }
     }
 
     override fun createBinding(
@@ -134,6 +162,41 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
         viewModel.observeIsFavorite().observe(viewLifecycleOwner) { isFavorite ->
             changeFavoriteButton(isFavorite)
         }
+
+        bindPlayerService()
+
+        checkAndRequestNotificationPermission()
+    }
+
+    private fun bindPlayerService() {
+        val intent = Intent(requireContext(), AudioPlayerService::class.java).apply {
+            putExtra(AudioPlayerService.EXTRA_URL, trackFromIntent?.previewUrl)
+            putExtra(AudioPlayerService.EXTRA_TRACK_NAME, trackFromIntent?.trackName)
+            putExtra(AudioPlayerService.EXTRA_ARTIST_NAME, trackFromIntent?.artistName)
+        }
+        requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.hideNotification()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.showNotification()
     }
 
     private fun setupBottomSheet() {
@@ -172,13 +235,12 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>() {
         binding.vFavoriteButton.setImageResource(imageResource)
     }
 
-    override fun onPause() {
-        super.onPause()
-        viewModel.onPause()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.onPause()
+        viewModel.hideNotification()
+        requireContext().unbindService(serviceConnection)
+        viewModel.onServiceDisconnected()
         activityToolbar?.overlay?.remove(dimDrawable)
     }
 

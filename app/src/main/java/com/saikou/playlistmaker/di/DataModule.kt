@@ -1,7 +1,6 @@
 package com.saikou.playlistmaker.di
 
 import android.content.Context
-import android.media.MediaPlayer
 import androidx.room.Room
 import com.saikou.playlistmaker.db.AppDatabase
 import com.saikou.playlistmaker.global.Const
@@ -26,9 +25,6 @@ val dataModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(BackendApi::class.java)
-    }
-    factory {
-        MediaPlayer()
     }
 
     single { Gson() }
