@@ -19,6 +19,7 @@ import com.saikou.playlistmaker.player.data.PlayerStateEnum
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -114,13 +115,20 @@ class AudioPlayerService : Service(), AudioPlayerControl {
 
     override fun showNotification() {
         if (_playerState.value.state == PlayerStateEnum.STATE_PLAYING) {
-            val notification = createNotification()
-            ServiceCompat.startForeground(
-                this,
-                NOTIFICATION_ID,
-                notification,
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
-            )
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            if (!notificationManager.areNotificationsEnabled()) return
+
+            try {
+                val notification = createNotification()
+                ServiceCompat.startForeground(
+                    this,
+                    NOTIFICATION_ID,
+                    notification,
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -161,6 +169,7 @@ class AudioPlayerService : Service(), AudioPlayerControl {
 
     override fun onDestroy() {
         super.onDestroy()
+        serviceScope.cancel()
         mediaPlayer.release()
         stopTimer()
     }

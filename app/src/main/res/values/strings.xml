@@ -55,6 +55,9 @@
     <string name="playlist_edit_info">Редактировать информацию</string>
     <string name="playlist_minutes_placeholder">%1$s минут</string>
     <string name="playlist_empty_tracks_msg">В этом плейлисте нет треков</string>
+    <string name="notification_permission_title">Уведомления отключены</string>
+    <string name="notification_permission_msg">Чтобы музыка продолжала играть в фоновом режиме, приложению необходимо разрешение на показ уведомлений. Пожалуйста, включите их в настройках.</string>
+    <string name="settings">Настройки</string>
 
     <plurals name="tracks_count">
         <item quantity="one">%d трек</item>
