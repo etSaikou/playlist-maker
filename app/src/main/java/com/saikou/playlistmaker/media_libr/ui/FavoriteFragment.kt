@@ -44,10 +44,10 @@ class FavoriteFragment : BindingFragment<FragmentFavoriteBinding>() {
             )
         }
 
-        trackAdapter = TrackAdapter {
+        trackAdapter = TrackAdapter(onItemClicked = {
             viewModel.addToHistory(it)
             onTrackClickDebounce(it)
-        }
+        })
 
         binding.vTrackList.adapter = trackAdapter
 

@@ -116,6 +116,10 @@ class PlayerViewModel(
     }
 
     private fun preparePlayer() {
+        if (track.previewUrl.isNullOrEmpty()) {
+            updateState(PlayerStateEnum.STATE_DEFAULT, "00:00")
+            return
+        }
         mediaPlayer.setDataSource(track.previewUrl)
 
         mediaPlayer.prepareAsync()

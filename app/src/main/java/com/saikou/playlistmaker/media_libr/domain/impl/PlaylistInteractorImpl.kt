@@ -28,7 +28,7 @@ class PlaylistInteractorImpl(
             emit(false)
         } else {
             val updatedTrackIds = playlist.trackIds.toMutableList().apply {
-                add(track.trackId)
+                add(0, track.trackId)
             }
             val updatedPlaylist = playlist.copy(
                 trackIds = updatedTrackIds,
@@ -38,5 +38,21 @@ class PlaylistInteractorImpl(
             playlistRepository.saveTrack(track)
             emit(true)
         }
+    }
+
+    override fun getPlaylistById(id: Int): Flow<Playlist> {
+        return playlistRepository.getPlaylistById(id)
+    }
+
+    override suspend fun getTracksByIds(trackIds: List<Long>): List<Track> {
+        return playlistRepository.getTracksByIds(trackIds)
+    }
+
+    override suspend fun removeTrackFromPlaylist(trackId: Long, playlistId: Int) {
+        playlistRepository.removeTrackFromPlaylist(trackId, playlistId)
+    }
+
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        playlistRepository.deletePlaylist(playlist)
     }
 }

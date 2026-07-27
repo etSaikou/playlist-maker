@@ -37,14 +37,20 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.playerFragment, R.id.termsFragment, R.id.createPlaylistFragment -> {
+                R.id.playerFragment, R.id.termsFragment, R.id.createPlaylistFragment, R.id.editPlaylistFragment -> {
                     binding.toolbar.navigationIcon =
                         AppCompatResources.getDrawable(this, R.drawable.ic_arrow_back_16)
                     binding.bottomNavMenu.vis(false)
+                    binding.toolbar.vis(true)
+                }
+                R.id.playlistDetailsFragment -> {
+                    binding.bottomNavMenu.vis(false)
+                    binding.toolbar.vis(false)
                 }
 
                 else -> {
                     binding.toolbar.navigationIcon = null
+                    binding.toolbar.vis(true)
                     binding.bottomNavMenu.vis(true)
                 }
             }

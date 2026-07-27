@@ -7,5 +7,5 @@ object Const {
     const val SEARCH_DEBOUNCE_DELAY = 2000L
     const val CLICK_DEBOUNCE_DELAY = 1000L
     const val PLAYER_CHECK = 300L
-    const val BASE_URL = "https://itunes.apple.com"
+    const val BASE_URL = "https://itunes.apple.com/"
 }

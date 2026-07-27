@@ -17,7 +17,7 @@ class TrackDbConvertor {
             releaseDate = track.releaseDate,
             primaryGenreName = track.primaryGenreName,
             country = track.country,
-            previewUrl = track.previewUrl,
+            previewUrl = track.previewUrl ?: "",
             addedAt = System.currentTimeMillis()
         )
     }
@@ -49,8 +49,24 @@ class TrackDbConvertor {
             releaseDate = track.releaseDate,
             primaryGenreName = track.primaryGenreName,
             country = track.country,
-            previewUrl = track.previewUrl,
+            previewUrl = track.previewUrl ?: "",
             addedAt = System.currentTimeMillis()
+        )
+    }
+
+    fun map(track: PlaylistTrackEntity): Track {
+        return Track(
+            trackId = track.trackId,
+            trackName = track.trackName,
+            artistName = track.artistName,
+            trackTimeMillis = track.trackTimeMillis,
+            artworkUrl100 = track.artworkUrl100,
+            collectionName = track.collectionName,
+            releaseDate = track.releaseDate,
+            primaryGenreName = track.primaryGenreName,
+            country = track.country,
+            previewUrl = track.previewUrl,
+            isFavorite = false
         )
     }
 }

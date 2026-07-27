@@ -51,11 +51,11 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
                 PlayerFragment.createArgs(track.serialize() ?: "")
             )
         }
-        trackAdapter = TrackAdapter {
+        trackAdapter = TrackAdapter(onItemClicked = {
             viewModel.addToHistory(it)
             render(TrackState.Loading)
             onTrackClickDebounce(it)
-        }.apply {
+        }).apply {
             load(emptyList())
         }
 

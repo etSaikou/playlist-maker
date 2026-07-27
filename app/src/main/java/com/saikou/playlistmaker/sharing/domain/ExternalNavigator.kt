@@ -4,4 +4,5 @@ interface ExternalNavigator {
     fun shareLink()
     fun getLink(): String
     fun openEmail()
+    fun shareText(text: String)
 }
