@@ -5,4 +5,7 @@
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="colorSecondary">@color/blue</item>
     </style>
+    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
+        <item name="android:fillColor">@color/white</item>
+    </style>
 </resources>

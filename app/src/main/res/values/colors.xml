@@ -17,4 +17,6 @@
     <color name="blue_text">#3772E7</color>
     <color name="light_gray">#E6E8EB</color>
     <color name="bottom_sheet_rectangle">@color/light_gray</color>
+
+    <color name="vector_color">#1A1B22</color>
 </resources>

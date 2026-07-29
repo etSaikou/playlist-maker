@@ -21,7 +21,7 @@ val viewModelModule = module {
         PlayerViewModel(track, get(), get())
     }
 
-    viewModel{
+    single {
         SettingsViewModel(get(), get())
     }
 

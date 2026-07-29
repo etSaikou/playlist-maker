@@ -9,6 +9,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saikou.playlistmaker.media_libr.domain.api.PlaylistInteractor
 import com.saikou.playlistmaker.media_libr.domain.models.Playlist
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -17,6 +20,9 @@ class CreatePlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor,
     private val context: Context
 ) : ViewModel() {
+
+    private val _playlistCreatedEvent = MutableSharedFlow<String>()
+    val playlistCreatedEvent: SharedFlow<String> = _playlistCreatedEvent.asSharedFlow()
 
     fun createPlaylist(name: String, description: String, imageUri: Uri?) {
         viewModelScope.launch {
@@ -31,6 +37,7 @@ class CreatePlaylistViewModel(
                     tracksCount = 0
                 )
             )
+            _playlistCreatedEvent.emit(name)
         }
     }
 
@@ -62,6 +69,7 @@ class CreatePlaylistViewModel(
                     imagePath = imagePath
                 )
             )
+            _playlistCreatedEvent.emit(name)
         }
     }
 }
