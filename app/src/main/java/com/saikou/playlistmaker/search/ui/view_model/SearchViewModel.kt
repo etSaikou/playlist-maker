@@ -24,6 +24,9 @@ class SearchViewModel(
 
     private val searchState = MutableLiveData<TrackState>()
     private val searchHistory = MutableLiveData<List<Track>?>(null)
+    private val _searchText = MutableLiveData<String>("")
+    val searchText: LiveData<String> = _searchText
+
     private var latestSearchText: String? = null
     private val showToast = SingleLiveEvent<String?>()
 
@@ -34,13 +37,18 @@ class SearchViewModel(
         }
 
     fun searchDebounce(changedText: String, isRefresh: Boolean) {
+        _searchText.value = changedText
 
         if (latestSearchText == changedText && !isRefresh) {
             return
         }
 
         this.latestSearchText = changedText
-        trackSearchDebounce(changedText)
+        if (changedText.isNotEmpty()) {
+            trackSearchDebounce(changedText)
+        } else {
+            clearSearch()
+        }
     }
 
     private fun searchRequest(newSearchText: String) {
@@ -121,6 +129,8 @@ class SearchViewModel(
     }
 
     fun clearSearch() {
+        _searchText.value = ""
+        latestSearchText = ""
         renderState(TrackState.Loading)
 
         viewModelScope.launch {

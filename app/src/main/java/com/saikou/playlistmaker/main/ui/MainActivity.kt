@@ -1,61 +1,28 @@
 package com.saikou.playlistmaker.main.ui
 
 import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
-import com.saikou.playlistmaker.R
-import com.saikou.playlistmaker.databinding.ActivityMainBinding
-import com.saikou.playlistmaker.global.vis
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import com.saikou.playlistmaker.settings.ui.view_model.SettingsViewModel
+import com.saikou.playlistmaker.ui.PlaylistMakerApp
+import com.saikou.playlistmaker.util.ThemeState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private val settingsViewModel: SettingsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        setContent {
+            val isDarkTheme by settingsViewModel.themeLiveData.observeAsState(false)
+            PlaylistMakerApp(isDarkTheme = isDarkTheme)
+            ThemeState.updateTheme(isDarkTheme)
         }
-
-
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
-        val navController = navHostFragment.navController
-        binding.bottomNavMenu.setupWithNavController(navController)
-        binding.toolbar.setupWithNavController(navController)
-
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.playerFragment, R.id.termsFragment, R.id.createPlaylistFragment, R.id.editPlaylistFragment -> {
-                    binding.toolbar.navigationIcon =
-                        AppCompatResources.getDrawable(this, R.drawable.ic_arrow_back_16)
-                    binding.bottomNavMenu.vis(false)
-                    binding.toolbar.vis(true)
-                }
-                R.id.playlistDetailsFragment -> {
-                    binding.bottomNavMenu.vis(false)
-                    binding.toolbar.vis(false)
-                }
-
-                else -> {
-                    binding.toolbar.navigationIcon = null
-                    binding.toolbar.vis(true)
-                    binding.bottomNavMenu.vis(true)
-                }
-            }
-        }
-
     }
-
 }

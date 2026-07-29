@@ -8,4 +8,5 @@
     <color name="search_hint">@color/black</color>
     <color name="et_search_bubble">#FFFFFF</color>
     <color name="bottom_sheet_rectangle">@color/white</color>
+    <color name="vector_color">#FFFFFFFF</color>
 </resources>

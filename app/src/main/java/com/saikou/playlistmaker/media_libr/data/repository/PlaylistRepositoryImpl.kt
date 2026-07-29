@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 class PlaylistRepositoryImpl(
     private val playlistDao: PlaylistDao,
@@ -38,8 +39,8 @@ class PlaylistRepositoryImpl(
     }
 
     override fun getPlaylistById(id: Int): Flow<Playlist> {
-        return playlistDao.getPlaylistByIdFlow(id).map { entity ->
-            playlistDbConvertor.map(entity)
+        return playlistDao.getPlaylistByIdFlow(id).mapNotNull { list ->
+            list.firstOrNull()?.let { playlistDbConvertor.map(it) }
         }
     }
 
@@ -52,7 +53,8 @@ class PlaylistRepositoryImpl(
     }
 
     override suspend fun removeTrackFromPlaylist(trackId: Long, playlistId: Int) {
-        val playlist = playlistDbConvertor.map(playlistDao.getPlaylistById(playlistId))
+        val playlistEntity = playlistDao.getPlaylistById(playlistId) ?: return
+        val playlist = playlistDbConvertor.map(playlistEntity)
         val updatedTrackIds = playlist.trackIds.toMutableList().apply {
             remove(trackId)
         }

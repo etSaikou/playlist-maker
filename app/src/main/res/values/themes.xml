@@ -6,7 +6,9 @@
         <item name="colorSecondary">@color/blue</item>
     </style>
 
-    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
+    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
+        <item name="android:fillColor">@color/black</item>
+    </style>
 
     <style name="ToolbarText">
         <item name="android:fontFamily">@font/ys_display</item>
@@ -17,4 +19,5 @@
         parent="Widget.Design.BottomNavigationView">
         <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
+
 </resources>
